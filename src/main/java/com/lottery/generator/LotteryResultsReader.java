@@ -29,7 +29,7 @@ public class LotteryResultsReader {
         this.resourceLoader = resourceLoader;
     }
 
-    public List<LotteryResult> readLotteryResults() throws IOException, ParseException {
+    public ArrayList<LotteryResult> readLotteryResults() throws IOException, ParseException {
 
         File resultsFile = resourceLoader.getResource(resultsFileName).getFile();
         List<String> lines = Files.readAllLines(resultsFile.toPath(), Charset.defaultCharset());

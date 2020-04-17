@@ -31,7 +31,11 @@ public class LotteryResultMapper {
             throw new IllegalArgumentException(wrongColumnsSizeMessage);
         }
 
-        List<Integer> basicNumberList = Arrays.stream(basicNumbersArray).map(Integer::valueOf).collect(Collectors.toList());
+        List<Integer> basicNumberList = Arrays.stream(basicNumbersArray)
+                .map(Integer::valueOf)
+                .collect(Collectors.toList());
+
+        basicNumberList.sort(Integer::compareTo);
 
         String[] additionallyNumbersArray = columns[2].split("-");
         if (additionallyNumbersArray.length != 2) {
@@ -42,6 +46,8 @@ public class LotteryResultMapper {
 
         List<Integer> additionallyNumberList = Arrays.stream(additionallyNumbersArray).map(Integer::valueOf)
                 .collect(Collectors.toList());
+
+        additionallyNumberList.sort(Integer::compareTo);
 
         return LotteryResult.builder()
                 .date(date)
