@@ -50,7 +50,8 @@ class XBasisNumbersWereGotYetTheoryTest {
                 Arguments.of(list_11_12_13_14_15, asList(lotteryResult_1_2_3_4_6, lotteryResult_1_7_3_4_5), 4, emptyList()),
                 Arguments.of(list_1_2_3_4_5, singletonList(lotteryResult_1_2_3_4_6), 4, singletonList(lotteryResult_1_2_3_4_6)),
                 Arguments.of(list_1_2_3_4_5, asList(lotteryResult_1_2_3_4_6, lotteryResult_1_7_3_4_5), 4, asList(lotteryResult_1_2_3_4_6, lotteryResult_1_7_3_4_5)),
-                Arguments.of(list_1_2_3_4_5, asList(lotteryResult_1_2_3_11_12, lotteryResult_3_4_5_6_7), 3, asList(lotteryResult_1_2_3_11_12, lotteryResult_3_4_5_6_7))
+                Arguments.of(list_1_2_3_4_5, asList(lotteryResult_1_2_3_11_12, lotteryResult_3_4_5_6_7), 3, asList(lotteryResult_1_2_3_11_12, lotteryResult_3_4_5_6_7)),
+                Arguments.of(list_1_2_3_4_5, asList(lotteryResult_1_2_3_11_12, lotteryResult_3_4_5_6_7, lotteryResult_1_2_3_11_12), 2, asList(lotteryResult_1_2_3_11_12, lotteryResult_3_4_5_6_7, lotteryResult_1_2_3_11_12))
         );
     }
 

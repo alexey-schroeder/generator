@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class XBasisNumbersWereGotYetTheory {
-    public List<LotteryResult> wereBasisNumbersGotYet(List<Integer> newNumbers, List<LotteryResult> oldLotteryResults, int counter) {
+    public List<LotteryResult> wereBasisNumbersGotYet(List<Integer> newNumbers, List<LotteryResult> oldLotteryResults, int minSameNumbersAmount) {
        List<LotteryResult> result = new ArrayList<>();
         for (LotteryResult lotteryResult : oldLotteryResults) {
             List<Integer> intersection = calculateIntersection(newNumbers, lotteryResult.getBasisNumbers());
-            if (intersection.size() >= counter) {
+            if (intersection.size() >= minSameNumbersAmount) {
                 intersection.sort(Integer::compareTo);
                 result.add(lotteryResult);
             }
