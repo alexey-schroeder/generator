@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,14 +18,16 @@ public class XBasisNumbersWereGotYetTheory {
             if (intersection.size() >= counter) {
                 intersection.sort(Integer::compareTo);
                 result.add(lotteryResult);
-//                System.out.println(MessageFormat.format("founded {0} equals numbers in lists {1}  and {2}: {3}",
-//                        intersection.size(), newNumbers, lotteryResult.getBasisNumbers(), intersection));
             }
         }
         return result;
     }
 
     private List<Integer> calculateIntersection(List<Integer> list, List<Integer> otherList) {
+        if(list == null || otherList == null){
+            return Collections.emptyList();
+        }
+
         return list.stream()
                 .filter(otherList::contains)
                 .collect(Collectors.toList());

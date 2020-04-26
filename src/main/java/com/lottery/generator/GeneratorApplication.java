@@ -23,7 +23,7 @@ public class GeneratorApplication implements CommandLineRunner {
     private AllBasisNumbersWereGotYetTheory allBasisNumbersWereGotYetTheory;
 
     @Autowired
-    private XBasisNumbersWereGotYetTheory xBasisNumbersWereGotYetTheory;
+    private ActualStatistic actualStatistic;
 
     public static void main(String[] args) {
         SpringApplication.run(GeneratorApplication.class, args);
@@ -37,25 +37,7 @@ public class GeneratorApplication implements CommandLineRunner {
                 .wereBasisNumbersGotYet(Arrays.asList(3, 25, 31, 32, 48), lotteryResults);
         System.out.println(basisNumbersGotYet);
 
-//        int sameResults = 0;
-//        int counter = 4;
-//        for (int i = 0; i < lotteryResults.size() - 1; i++) {
-//            List<LotteryResult> sameLotteryResults = xBasisNumbersWereGotYetTheory
-//                    .wereBasisNumbersGotYet(lotteryResults.get(i).getBasisNumbers(), lotteryResults, counter);
-//
-//            for (LotteryResult lotteryResult : sameLotteryResults) {
-//                if (!lotteryResult.getDate().equals(lotteryResults.get(i).getDate())) {
-//                    sameResults++;
-//                    System.out.println(MessageFormat.format("found {0} same numbers in lottery results {1} and {2}",
-//                            counter, lotteryResults.get(i), lotteryResult));
-//                }
-//            }
-//        }
-//        if (sameResults == 0) {
-//            System.out.println(MessageFormat.format("found no intersactions with counter {0}", counter));
-//        } else {
-//            System.out.println(MessageFormat.format("found {0} intersactions with counter {1} in {2} results",
-//                    sameResults, counter, lotteryResults.size()));
-//        }
+        actualStatistic.printSameNumbersResultsByNumberCounter(lotteryResults, 5);
+
     }
 }

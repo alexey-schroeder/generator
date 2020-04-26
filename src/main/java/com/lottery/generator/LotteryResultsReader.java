@@ -17,6 +17,8 @@ import java.util.List;
 @Component
 public class LotteryResultsReader {
 
+    //https://www.lottozahlenonline.com/eurojackpot/eurojackpot_archiv.csv
+
     @Value("${results.file.name}")
     private String resultsFileName;
 
@@ -31,8 +33,7 @@ public class LotteryResultsReader {
 
     public ArrayList<LotteryResult> readLotteryResults() throws IOException, ParseException {
 
-        File resultsFile = resourceLoader.getResource(resultsFileName).getFile();
-        List<String> lines = Files.readAllLines(resultsFile.toPath(), Charset.defaultCharset());
+        List<String> lines = readLinesFromFile();
         ArrayList<LotteryResult> lotteryResults = new ArrayList<>(lines.size());
         for (String line : lines) {
             LotteryResult lotteryResult = lotteryResultMapper.lineToLotteryResult(line);
@@ -42,5 +43,10 @@ public class LotteryResultsReader {
         lotteryResults.sort(Comparator.comparing(LotteryResult::getDate).reversed());
 
         return lotteryResults;
+    }
+
+    public List<String> readLinesFromFile() throws IOException {
+        File resultsFile = resourceLoader.getResource(resultsFileName).getFile();
+        return Files.readAllLines(resultsFile.toPath(), Charset.defaultCharset());
     }
 }
