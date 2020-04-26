@@ -37,6 +37,8 @@ class XBasisNumbersWereGotYetTheoryTest {
 
         LotteryResult lotteryResult_1_2_3_4_6 = createLotteryResult(asList(1, 2, 3, 4, 6));
         LotteryResult lotteryResult_1_7_3_4_5 = createLotteryResult(asList(1, 7, 3, 4, 5));
+        LotteryResult lotteryResult_1_2_3_11_12 = createLotteryResult(asList(1, 2, 3, 11, 12));
+        LotteryResult lotteryResult_3_4_5_6_7 = createLotteryResult(asList(3, 4, 5, 6, 7));
 
         return Stream.of(
                 Arguments.of(null, singletonList(createLotteryResult(null)), 4, emptyList()),
@@ -47,7 +49,8 @@ class XBasisNumbersWereGotYetTheoryTest {
                 Arguments.of(list_11_12_13_14_15, emptyList(), 4, emptyList()),
                 Arguments.of(list_11_12_13_14_15, asList(lotteryResult_1_2_3_4_6, lotteryResult_1_7_3_4_5), 4, emptyList()),
                 Arguments.of(list_1_2_3_4_5, singletonList(lotteryResult_1_2_3_4_6), 4, singletonList(lotteryResult_1_2_3_4_6)),
-                Arguments.of(list_1_2_3_4_5, asList(lotteryResult_1_2_3_4_6, lotteryResult_1_7_3_4_5), 4, asList(lotteryResult_1_2_3_4_6, lotteryResult_1_7_3_4_5))
+                Arguments.of(list_1_2_3_4_5, asList(lotteryResult_1_2_3_4_6, lotteryResult_1_7_3_4_5), 4, asList(lotteryResult_1_2_3_4_6, lotteryResult_1_7_3_4_5)),
+                Arguments.of(list_1_2_3_4_5, asList(lotteryResult_1_2_3_11_12, lotteryResult_3_4_5_6_7), 3, asList(lotteryResult_1_2_3_11_12, lotteryResult_3_4_5_6_7))
         );
     }
 
