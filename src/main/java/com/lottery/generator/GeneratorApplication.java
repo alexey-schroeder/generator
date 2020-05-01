@@ -38,24 +38,6 @@ public class GeneratorApplication implements CommandLineRunner {
 //        actualStatistic.printSameNumbersResultsBySameNumbersAmount(lotteryResults, 5);
 //        actualStatistic.printSameNumbersResultsBySameNumbersAmountAndMaxDeepOfSearchInAllResults(lotteryResults, 1, 3);
 //        actualStatistic.printEachNumberExistInLotteryResult(lotteryResults);
-        Map<Integer, List<Integer>> lotteryCountsWithoutNumber = actualStatistic.getLotteryCountsWithoutNumber(lotteryResults);
-        Map<List<Integer>, Integer> inversedMap = lotteryCountsWithoutNumber.entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
-        List<List<Integer>> allCounts = new ArrayList<>(inversedMap.keySet());
-        allCounts.sort((o1, o2) -> {
-            int tempResult = o2.get(0) - o1.get(0);
-            if (tempResult != 0) {
-                return tempResult;
-            }
-            tempResult = o1.size() - o2.size();
-            if(tempResult != 0){
-                return tempResult;
-            }
-            return o2.get(1) - o1.get(1);
-        });
-        for (List<Integer> count : allCounts) {
-            System.out.println(MessageFormat.format("{0}: {1}", inversedMap.get(count), count));
-        }
+        actualStatistic.printNumbersWithMaxPause(lotteryResults);
     }
 }

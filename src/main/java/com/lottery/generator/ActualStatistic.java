@@ -52,14 +52,14 @@ public class ActualStatistic {
         }
     }
 
-    public List<Integer> getNumberExistInLotteryResult(int number, List<LotteryResult> lotteryResults) {
+    public static List<Integer> getNumberExistInLotteryResult(int number, List<LotteryResult> lotteryResults) {
         return lotteryResults.stream()
                 .map(result -> result.getBasisNumbers().contains(number))
                 .map(contains -> contains ? 1 : 0)
                 .collect(Collectors.toList());
     }
 
-    public Map<Integer, List<Integer>> getLotteryCountsWithoutNumber(List<LotteryResult> lotteryResults) {
+    public static Map<Integer, List<Integer>> getLotteryCountsWithoutNumber(List<LotteryResult> lotteryResults) {
         Map<Integer, List<Integer>> result = new HashMap<>();
         for (int i = 1; i <= 50; i++) {
             List<Integer> integerList = getLotteryCountsWithoutNumber(lotteryResults, i);
@@ -68,7 +68,29 @@ public class ActualStatistic {
         return result;
     }
 
-    public List<Integer> getLotteryCountsWithoutNumber(List<LotteryResult> lotteryResults, int number) {
+    public static void printNumbersWithMaxPause(List<LotteryResult> lotteryResults){
+        Map<Integer, List<Integer>> lotteryCountsWithoutNumber = getLotteryCountsWithoutNumber(lotteryResults);
+        Map<List<Integer>, Integer> inversedMap = lotteryCountsWithoutNumber.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        List<List<Integer>> allCounts = new ArrayList<>(inversedMap.keySet());
+        allCounts.sort((o1, o2) -> {
+            int tempResult = o2.get(0) - o1.get(0);
+            if (tempResult != 0) {
+                return tempResult;
+            }
+            tempResult = o1.size() - o2.size();
+            if(tempResult != 0){
+                return tempResult;
+            }
+            return o2.get(1) - o1.get(1);
+        });
+        for (List<Integer> count : allCounts) {
+            System.out.println(MessageFormat.format("{0}: {1}", inversedMap.get(count), count));
+        }
+    }
+
+    public static List<Integer> getLotteryCountsWithoutNumber(List<LotteryResult> lotteryResults, int number) {
         List<Integer> existsList = getNumberExistInLotteryResult(number, lotteryResults);
         String listAsString = getListAsString(existsList);
         String[] split = listAsString.split("1");
@@ -76,7 +98,7 @@ public class ActualStatistic {
     }
 
 
-    private String getListAsString(List<Integer> list) {
+    private static String getListAsString(List<Integer> list) {
         return list.stream().map(i -> i.toString()).collect(Collectors.joining());
     }
 
