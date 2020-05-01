@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class ActualStatistic {
@@ -49,6 +49,41 @@ public class ActualStatistic {
                 System.out.println(MessageFormat.format("found  same numbers in lottery results {0} and {1}",
                         lotteryResultForCompare, sameLotteryResults));
             }
+        }
+    }
+
+    public List<Integer> getNumberExistInLotteryResult(int number, List<LotteryResult> lotteryResults) {
+        return lotteryResults.stream()
+                .map(result -> result.getBasisNumbers().contains(number))
+                .map(contains -> contains ? 1 : 0)
+                .collect(Collectors.toList());
+    }
+
+    public Map<Integer, List<Integer>> getLotteryCountsWithoutNumber(List<LotteryResult> lotteryResults) {
+        Map<Integer, List<Integer>> result = new HashMap<>();
+        for (int i = 1; i <= 50; i++) {
+            List<Integer> integerList = getLotteryCountsWithoutNumber(lotteryResults, i);
+            result.put(i, integerList);
+        }
+        return result;
+    }
+
+    public List<Integer> getLotteryCountsWithoutNumber(List<LotteryResult> lotteryResults, int number) {
+        List<Integer> existsList = getNumberExistInLotteryResult(number, lotteryResults);
+        String listAsString = getListAsString(existsList);
+        String[] split = listAsString.split("1");
+        return Arrays.stream(split).map(array -> array.length()).collect(Collectors.toList());
+    }
+
+
+    private String getListAsString(List<Integer> list) {
+        return list.stream().map(i -> i.toString()).collect(Collectors.joining());
+    }
+
+    public void printEachNumberExistInLotteryResult(List<LotteryResult> lotteryResults) {
+        for (int i = 1; i <= 50; i++) {
+            List<Integer> existsList = getNumberExistInLotteryResult(i, lotteryResults);
+            System.out.println(MessageFormat.format("{0}: {1}", i, existsList));
         }
     }
 }

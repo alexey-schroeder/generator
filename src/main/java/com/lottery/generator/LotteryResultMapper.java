@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 public class LotteryResultMapper {
 
     public LotteryResult lineToLotteryResult(String resultLine) throws ParseException {
-        String[] columns = resultLine.split(";");
+        String[] columns = resultLine.split(",");
         if (columns.length != 5) {
             String wrongColumnsSizeMessage =  MessageFormat.format(
                     "The line \"{0}\" can not be parsed. Reason: the line should have five columns", resultLine);
             throw new IllegalArgumentException(wrongColumnsSizeMessage);
         }
 
-        Instant date = new SimpleDateFormat("dd.MM.yyyy hh:mm").parse(columns[0]).toInstant();
+        Instant date = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").parse(columns[0]).toInstant();
 
         String[] basicNumbersArray = columns[1].split("-");
         if (basicNumbersArray.length != 5) {
