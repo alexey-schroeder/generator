@@ -97,7 +97,6 @@ public class ActualStatistic {
         return Arrays.stream(split).map(array -> array.length()).collect(Collectors.toList());
     }
 
-
     private static String getListAsString(List<Integer> list) {
         return list.stream().map(i -> i.toString()).collect(Collectors.joining());
     }

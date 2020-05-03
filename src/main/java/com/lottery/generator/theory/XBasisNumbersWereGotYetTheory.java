@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.lottery.generator.theory.TheoryUtils.calculateIntersection;
+
 @Component
 public class XBasisNumbersWereGotYetTheory {
     public List<LotteryResult> wereBasisNumbersGotYet(List<Integer> newNumbers, List<LotteryResult> oldLotteryResults, int minSameNumbersAmount) {
@@ -21,15 +23,5 @@ public class XBasisNumbersWereGotYetTheory {
             }
         }
         return result;
-    }
-
-    private List<Integer> calculateIntersection(List<Integer> list, List<Integer> otherList) {
-        if(list == null || otherList == null){
-            return Collections.emptyList();
-        }
-
-        return list.stream()
-                .filter(otherList::contains)
-                .collect(Collectors.toList());
     }
 }
