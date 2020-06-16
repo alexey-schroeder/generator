@@ -1,4 +1,4 @@
-package com.lottery.generator;
+package com.lottery.generator.eurojackpot;
 
 import com.lottery.generator.model.LotteryResult;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Component
-public class LotteryResultsReader {
+public class EuroJackpotLotteryResultsReader {
 
     //https://www.lottozahlenonline.com/eurojackpot/eurojackpot_archiv.csv
 
@@ -24,9 +24,9 @@ public class LotteryResultsReader {
 
     private final ResourceLoader resourceLoader;
 
-    private final LotteryResultMapper lotteryResultMapper;
+    private final EuroJackpotLotteryResultMapper lotteryResultMapper;
 
-    public LotteryResultsReader(LotteryResultMapper lotteryResultMapper, ResourceLoader resourceLoader) {
+    public EuroJackpotLotteryResultsReader(EuroJackpotLotteryResultMapper lotteryResultMapper, ResourceLoader resourceLoader) {
         this.lotteryResultMapper = lotteryResultMapper;
         this.resourceLoader = resourceLoader;
     }
