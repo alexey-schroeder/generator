@@ -12,14 +12,14 @@ import static java.time.temporal.ValueRange.of;
 
 @Getter
 @Component
-public class Categories {
+public class EuroJackpotCategories {
     private Category categoryA;
     private Category categoryB;
     private Category categoryC;
     private Category categoryD;
     private Category categoryE;
 
-    public Categories() {
+    public EuroJackpotCategories() {
         initCategoryA();
         initCategoryB();
         initCategoryC();
@@ -27,8 +27,12 @@ public class Categories {
         initCategoryE();
     }
 
-    public int calculateIndex(LotteryResult lotteryResult) {
+    public int calculateAbsIndex(LotteryResult lotteryResult) {
         return calculateIndexes(lotteryResult).stream().map(index -> Math.abs(index)).mapToInt(Integer::intValue).sum();
+    }
+
+    public int calculateIndex(LotteryResult lotteryResult) {
+        return calculateIndexes(lotteryResult).stream().mapToInt(Integer::intValue).sum();
     }
 
     public List<Integer> calculateIndexes(LotteryResult lotteryResult) {

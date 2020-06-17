@@ -1,6 +1,6 @@
 package com.lottery.generator;
 
-import com.lottery.generator.category.Categories;
+import com.lottery.generator.category.EuroJackpotCategories;
 import com.lottery.generator.eurojackpot.EuroJackpotLotteryResultsReader;
 import com.lottery.generator.model.LotteryResult;
 import com.lottery.generator.theory.AllBasisNumbersWereGotYetTheory;
@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ public class GeneratorApplication implements CommandLineRunner {
     private LotteryResultContainsXNumbersFromLastResults lotteryResultContainsXNumbersFromLastResult;
 
     @Autowired
-    private Categories categories;
+    private EuroJackpotCategories euroJackpotCategories;
 
     public static void main(String[] args) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder(GeneratorApplication.class);
@@ -81,29 +80,35 @@ public class GeneratorApplication implements CommandLineRunner {
 
 //        ChartUtils.saveLotteryResultsCategoriesAsImage(lotteryResults, "XYLineChart.jpeg");
 
-        List<Integer> indexes = lotteryResults.stream().map(result -> categories.calculateIndex(result)).collect(Collectors.toList());
-        long count0 = indexes.stream().filter(v -> v.equals(0)).count();
-        System.out.println("0 -> " + count0 * 1.0 / lotteryResults.size());
+//        List<Integer> absIndexes = lotteryResults.stream().map(result -> categories.calculateAbsIndex(result)).collect(Collectors.toList());
+//        for (int i = 0; i < 10; i++) {
+//            int finalI = i;
+//            long count = absIndexes.stream().filter(v -> v.equals(finalI)).count();
+//            System.out.println(MessageFormat.format("{0} -> {1}", i, count * 1.0 / lotteryResults.size()));
+//        }
+//
+//        List<Integer> indexes = lotteryResults.stream().map(result -> categories.calculateIndex(result)).collect(Collectors.toList());
+//        for (int i = -3; i < 10; i++) {
+//            int finalI = i;
+//            long count = indexes.stream().filter(v -> v.equals(finalI)).count();
+//            System.out.println(MessageFormat.format("{0} -> {1}", i, count * 1.0 / lotteryResults.size()));
+//        }
 
-        long count1 = indexes.stream().filter(v -> v.equals(1)).count();
-        System.out.println("1 -> " + count1 * 1.0 / lotteryResults.size());
+        List<List<Integer>> lists = lotteryResults.stream().map(result -> euroJackpotCategories.calculateIndexes(result)).collect(Collectors.toList());
+//        long listsWithZerroInMiddle = lists.stream().filter(indexesList -> indexesList.get(2).equals(0)).count();
+//
+//        System.out.println(listsWithZerroInMiddle * 1.0 / lotteryResults.size());
 
-        long count2 = indexes.stream().filter(v -> v.equals(2)).count();
-        System.out.println("2 -> " + count2 * 1.0 / lotteryResults.size());
+//        long countOfListWithOneInMiddle = lists.stream().filter(indexesList -> indexesList.get(2).equals(1)).count();
+//        long countOfListWithFirstNumbersGreaterThanZero = lists.stream().filter(indexesList -> indexesList.get(0) > 0 && indexesList.get(1) > 0).count();
+//        System.out.println(countOfListWithOneInMiddle * 1.0 / countOfListWithFirstNumbersGreaterThanZero);
 
-        long count3 = indexes.stream().filter(v -> v.equals(3)).count();
-        System.out.println("3 -> " + count3 * 1.0 / lotteryResults.size());
-
-        long count4 = indexes.stream().filter(v -> v.equals(4)).count();
-        System.out.println("4 -> " + count4 * 1.0 / lotteryResults.size());
-
-        long count5 = indexes.stream().filter(v -> v.equals(5)).count();
-        System.out.println("5 -> " + count5 * 1.0 / lotteryResults.size());
-
-        long count6 = indexes.stream().filter(v -> v.equals(6)).count();
-        System.out.println("6 -> " + count6 * 1.0 / lotteryResults.size());
-
-        long count7 = indexes.stream().filter(v -> v.equals(7)).count();
-        System.out.println("7 -> " + count7 * 1.0 / lotteryResults.size());
+//        long countWithSimetricalIndexes = lists.stream().filter(
+//                indexesList ->
+//                        indexesList.get(0).equals(indexesList.get(4)) &&
+//                                indexesList.get(1).equals(indexesList.get(3))).count();
+//
+//        System.out.println(countWithSimetricalIndexes * 1.0 / lists.size());
+        lists.forEach(System.out::println);
     }
 }
