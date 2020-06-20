@@ -10,42 +10,42 @@ import static java.time.temporal.ValueRange.of;
 
 @Getter
 @Component
-public class EuroJackpotCategories extends Categories{
+public class MillionDayItalyCategories extends Categories {
 
     protected void initCategoryA() {
         Map<Integer, ValueRange> rangeMap = Map.of(
-                0, of(1, 6),
-                1, of(7, 12),
-                2, of(13, 17),
-                3, of(18, 22),
-                4, of(23, 50));
+                0, of(1, 7),
+                1, of(8, 12),
+                2, of(13, 18),
+                3, of(19, 29),
+                4, of(30, 55));
         categoryA = new Category("A", rangeMap);
     }
 
     protected void initCategoryB() {
         Map<Integer, ValueRange> rangeMap = Map.of(
-                0, of(7, 16),
-                1, of(17, 24),
-                2, of(25, 33),
-                3, of(34, 50),
-                -1, of(1, 6));
+                0, of(8, 19),
+                1, of(20, 28),
+                2, of(29, 35),
+                3, of(36, 55),
+                -1, of(1, 7));
         categoryB = new Category("B", rangeMap);
     }
 
     protected void initCategoryC() {
         Map<Integer, ValueRange> rangeMap = Map.of(
-                0, of(17, 33),
-                1, of(34, 41),
-                2, of(42, 50),
-                -1, of(12, 16),
+                0, of(20, 33),
+                1, of(34, 44),
+                2, of(45, 55),
+                -1, of(12, 19),
                 -2, of(1, 11));
         categoryC = new Category("C", rangeMap);
     }
 
     protected void initCategoryD() {
         Map<Integer, ValueRange> rangeMap = Map.of(
-                0, of(33, 43),
-                1, of(44, 50),
+                0, of(34, 50),
+                1, of(51, 55),
                 -1, of(29, 33),
                 -2, of(18, 28),
                 -3, of(1, 17));
@@ -54,11 +54,11 @@ public class EuroJackpotCategories extends Categories{
 
     protected void initCategoryE() {
         Map<Integer, ValueRange> rangeMap = Map.of(
-                0, of(44, 50),
-                -1, of(42, 43),
-                -2, of(34, 41),
-                -3, of(23, 33),
-                -4, of(1, 22));
+                0, of(50, 55),
+                -1, of(45, 49),
+                -2, of(36, 44),
+                -3, of(30, 35),
+                -4, of(1, 29));
         categoryE = new Category("E", rangeMap);
     }
 }

@@ -1,4 +1,4 @@
-package com.lottery.generator.eurojackpot;
+package com.lottery.generator.resultmapper;
 
 import com.lottery.generator.model.LotteryResult;
 import org.springframework.stereotype.Component;
@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class EuroJackpotLotteryResultMapper {
+public class EuroJackpotLotteryResultMapper extends LotteryResultMapper {
 
+    @Override
     public LotteryResult lineToLotteryResult(String resultLine) throws ParseException {
         String[] columns = resultLine.split(",");
         if (columns.length != 5) {

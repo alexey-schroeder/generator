@@ -1,9 +1,8 @@
-package com.lottery.generator.eurojackpot;
+package com.lottery.generator.resultreader;
 
 import com.lottery.generator.model.LotteryResult;
-import org.springframework.beans.factory.annotation.Value;
+import com.lottery.generator.resultmapper.LotteryResultMapper;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,19 +13,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@Component
-public class EuroJackpotLotteryResultsReader {
-
-    //https://www.lottozahlenonline.com/eurojackpot/eurojackpot_archiv.csv
-
-    @Value("${results.file.name}")
-    private String resultsFileName;
-
+public abstract class LotteryResultsReader {
     private final ResourceLoader resourceLoader;
+    private final LotteryResultMapper lotteryResultMapper;
 
-    private final EuroJackpotLotteryResultMapper lotteryResultMapper;
-
-    public EuroJackpotLotteryResultsReader(EuroJackpotLotteryResultMapper lotteryResultMapper, ResourceLoader resourceLoader) {
+    public LotteryResultsReader(LotteryResultMapper lotteryResultMapper, ResourceLoader resourceLoader) {
         this.lotteryResultMapper = lotteryResultMapper;
         this.resourceLoader = resourceLoader;
     }
@@ -46,7 +37,9 @@ public class EuroJackpotLotteryResultsReader {
     }
 
     public List<String> readLinesFromFile() throws IOException {
-        File resultsFile = resourceLoader.getResource(resultsFileName).getFile();
+        File resultsFile = resourceLoader.getResource(getResultsFileName()).getFile();
         return Files.readAllLines(resultsFile.toPath(), Charset.defaultCharset());
     }
+
+    protected abstract String getResultsFileName();
 }

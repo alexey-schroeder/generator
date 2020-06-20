@@ -23,8 +23,8 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class ChartUtils {
 
-    public static void saveLotteryResultsCategoriesAsImage(List<LotteryResult> lotteryResults, String fileName) throws IOException {
-        int[][] statistic = new int[5][51];
+    public static void saveLotteryResultsCategoriesAsImage(List<LotteryResult> lotteryResults,int maxNumber, String fileName) throws IOException {
+        int[][] statistic = new int[5][maxNumber + 1];
         for (LotteryResult lotteryResult : lotteryResults) {
             for (int i = 0; i < lotteryResult.getBasisNumbers().size(); i++) {
                 int[] categoryArray = statistic[i];
