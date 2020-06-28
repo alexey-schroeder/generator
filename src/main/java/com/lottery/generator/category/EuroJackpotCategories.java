@@ -19,7 +19,7 @@ public class EuroJackpotCategories extends Categories{
                 2, of(13, 17),
                 3, of(18, 22),
                 4, of(23, 50));
-        categoryA = new Category("A", rangeMap);
+        categoryA = new Category("A",0, rangeMap);
     }
 
     protected void initCategoryB() {
@@ -29,7 +29,7 @@ public class EuroJackpotCategories extends Categories{
                 2, of(25, 33),
                 3, of(34, 50),
                 -1, of(1, 6));
-        categoryB = new Category("B", rangeMap);
+        categoryB = new Category("B",1, rangeMap);
     }
 
     protected void initCategoryC() {
@@ -39,7 +39,7 @@ public class EuroJackpotCategories extends Categories{
                 2, of(42, 50),
                 -1, of(12, 16),
                 -2, of(1, 11));
-        categoryC = new Category("C", rangeMap);
+        categoryC = new Category("C",2, rangeMap);
     }
 
     protected void initCategoryD() {
@@ -49,7 +49,7 @@ public class EuroJackpotCategories extends Categories{
                 -1, of(29, 33),
                 -2, of(18, 28),
                 -3, of(1, 17));
-        categoryD = new Category("D", rangeMap);
+        categoryD = new Category("D",3, rangeMap);
     }
 
     protected void initCategoryE() {
@@ -59,6 +59,6 @@ public class EuroJackpotCategories extends Categories{
                 -2, of(34, 41),
                 -3, of(23, 33),
                 -4, of(1, 22));
-        categoryE = new Category("E", rangeMap);
+        categoryE = new Category("E",4, rangeMap);
     }
 }

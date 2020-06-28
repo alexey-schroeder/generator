@@ -19,7 +19,7 @@ public class MillionDayItalyCategories extends Categories {
                 2, of(13, 18),
                 3, of(19, 29),
                 4, of(30, 55));
-        categoryA = new Category("A", rangeMap);
+        categoryA = new Category("A", 0, rangeMap);
     }
 
     protected void initCategoryB() {
@@ -29,7 +29,7 @@ public class MillionDayItalyCategories extends Categories {
                 2, of(29, 35),
                 3, of(36, 55),
                 -1, of(1, 7));
-        categoryB = new Category("B", rangeMap);
+        categoryB = new Category("B", 1, rangeMap);
     }
 
     protected void initCategoryC() {
@@ -39,7 +39,7 @@ public class MillionDayItalyCategories extends Categories {
                 2, of(45, 55),
                 -1, of(12, 19),
                 -2, of(1, 11));
-        categoryC = new Category("C", rangeMap);
+        categoryC = new Category("C", 2, rangeMap);
     }
 
     protected void initCategoryD() {
@@ -49,7 +49,7 @@ public class MillionDayItalyCategories extends Categories {
                 -1, of(29, 33),
                 -2, of(18, 28),
                 -3, of(1, 17));
-        categoryD = new Category("D", rangeMap);
+        categoryD = new Category("D", 3, rangeMap);
     }
 
     protected void initCategoryE() {
@@ -59,6 +59,6 @@ public class MillionDayItalyCategories extends Categories {
                 -2, of(36, 44),
                 -3, of(30, 35),
                 -4, of(1, 29));
-        categoryE = new Category("E", rangeMap);
+        categoryE = new Category("E", 4, rangeMap);
     }
 }

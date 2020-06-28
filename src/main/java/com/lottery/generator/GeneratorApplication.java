@@ -3,6 +3,7 @@ package com.lottery.generator;
 import com.lottery.generator.category.EuroJackpotCategories;
 import com.lottery.generator.category.MillionDayItalyCategories;
 import com.lottery.generator.model.LotteryResult;
+import com.lottery.generator.printer.Printer;
 import com.lottery.generator.resultreader.EuroJackpotLotteryResultsReader;
 import com.lottery.generator.resultreader.MillionDayItalyLotteryResultsReader;
 import com.lottery.generator.theory.AllBasisNumbersWereGotYetTheory;
@@ -15,6 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -119,6 +121,12 @@ public class GeneratorApplication implements CommandLineRunner {
 //                                indexesList.get(1).equals(indexesList.get(3))).count();
 //
 //        System.out.println(countWithSimetricalIndexes * 1.0 / lists.size());
-        lists.forEach(System.out::println);
+//        lists.forEach(System.out::println);
+
+        Map<LotteryResult, List<Integer>> categories = ActualStatistic.calculateCategoriesForResults(lotteryResults, millionDayItalyCategories);
+        Printer.print(categories);
+
+        int depth = ActualStatistic.getIndexDepthForCategory(lotteryResults.subList(2, lotteryResults.size()), millionDayItalyCategories.getCategoryC());
+        System.out.println(depth);
     }
 }

@@ -11,6 +11,8 @@ import java.util.Map;
 public class Category {
     @Getter
     private String name;
+    @Getter
+    private int indexInBasisNumbers;
     private Map<Integer, ValueRange> indexes;
 
     public void addIndex(Integer index, ValueRange range){

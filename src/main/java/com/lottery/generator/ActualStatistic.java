@@ -1,5 +1,7 @@
 package com.lottery.generator;
 
+import com.lottery.generator.category.Categories;
+import com.lottery.generator.category.Category;
 import com.lottery.generator.model.LotteryResult;
 import com.lottery.generator.theory.XBasisNumbersWereGotYetTheory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -68,7 +71,7 @@ public class ActualStatistic {
         return result;
     }
 
-    public static void printNumbersWithMaxPause(List<LotteryResult> lotteryResults){
+    public static void printNumbersWithMaxPause(List<LotteryResult> lotteryResults) {
         Map<Integer, List<Integer>> lotteryCountsWithoutNumber = getLotteryCountsWithoutNumber(lotteryResults);
         Map<List<Integer>, Integer> inversedMap = lotteryCountsWithoutNumber.entrySet()
                 .stream()
@@ -80,7 +83,7 @@ public class ActualStatistic {
                 return tempResult;
             }
             tempResult = o1.size() - o2.size();
-            if(tempResult != 0){
+            if (tempResult != 0) {
                 return tempResult;
             }
             return o2.get(1) - o1.get(1);
@@ -97,8 +100,27 @@ public class ActualStatistic {
         return Arrays.stream(split).map(array -> array.length()).collect(Collectors.toList());
     }
 
-    private static String getListAsString(List<Integer> list) {
-        return list.stream().map(i -> i.toString()).collect(Collectors.joining());
+    public static List<List<Integer>> calculateDistancesBetweenNumberInLotteryResult(List<LotteryResult> lotteryResults) {
+        return lotteryResults.stream().
+                map(ActualStatistic::calculateDistancesBetweenNumberInLotteryResult).
+                collect(Collectors.toList());
+    }
+
+    public static List<Integer> calculateDistancesBetweenNumberInLotteryResult(LotteryResult lotteryResult) {
+        List<Integer> basisNumbers = lotteryResult.getBasisNumbers();
+        List<Integer> result = new ArrayList<>(basisNumbers.size() - 1);
+        for (int i = 0; i < basisNumbers.size() - 1; i++) {
+            int distance = basisNumbers.get(i + 1) - basisNumbers.get(i);
+            result.add(distance);
+        }
+        return result;
+    }
+
+    public static Map<LotteryResult, Integer> calculateBasisNumbersSum(List<LotteryResult> lotteryResults) {
+        return lotteryResults.stream().
+                collect(Collectors.toMap(
+                        result -> result,
+                        result -> result.getBasisNumbers().stream().mapToInt(Integer::intValue).sum()));
     }
 
     public void printEachNumberExistInLotteryResult(List<LotteryResult> lotteryResults) {
@@ -106,5 +128,36 @@ public class ActualStatistic {
             List<Integer> existsList = getNumberExistInLotteryResult(i, lotteryResults);
             System.out.println(MessageFormat.format("{0}: {1}", i, existsList));
         }
+    }
+
+    public static Map<LotteryResult, List<Integer>> calculateCategoriesForResults(List<LotteryResult> lotteryResults, Categories categories) {
+        return lotteryResults.stream().
+                collect(Collectors.toMap(
+                        Function.identity(),
+                        lotteryResult -> categories.calculateIndexes(lotteryResult)));
+    }
+
+    //как долго повторяется в последних результатах один и тот же индекс
+    //например над0 посмотреть сколько раз за последнее время был в середине индекс 0
+    public static int getIndexDepthForCategory(List<LotteryResult> lotteryResults, Category category) {
+        LotteryResult lastLotteryResult = lotteryResults.get(0);
+        int lastIndexInCategory = getBasisNumberIndexInCategory(lastLotteryResult, category);
+
+        for (int i = 1; i < lotteryResults.size(); i++) {
+            int indexInCategory = getBasisNumberIndexInCategory(lotteryResults.get(i), category);
+            if (lastIndexInCategory != indexInCategory) {
+                return i;
+            }
+        }
+        return lotteryResults.size();
+    }
+
+    private static String getListAsString(List<Integer> list) {
+        return list.stream().map(i -> i.toString()).collect(Collectors.joining());
+    }
+
+    private static int getBasisNumberIndexInCategory(LotteryResult lotteryResult, Category category) {
+        int basisNumberInCategory = lotteryResult.getBasisNumbers().get(category.getIndexInBasisNumbers());
+        return category.getIndexForNumber(basisNumberInCategory);
     }
 }

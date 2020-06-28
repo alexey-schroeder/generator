@@ -6,7 +6,9 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -16,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -23,7 +26,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class ChartUtils {
 
-    public static void saveLotteryResultsCategoriesAsImage(List<LotteryResult> lotteryResults,int maxNumber, String fileName) throws IOException {
+    public static void saveLotteryResultsCategoriesAsImage(List<LotteryResult> lotteryResults, int maxNumber, String fileName) throws IOException {
         int[][] statistic = new int[5][maxNumber + 1];
         for (LotteryResult lotteryResult : lotteryResults) {
             for (int i = 0; i < lotteryResult.getBasisNumbers().size(); i++) {
@@ -70,6 +73,22 @@ public class ChartUtils {
         File XYChart = new File(fileName);
         org.jfree.chart.ChartUtils.saveChartAsJPEG(XYChart, chart, 1500, 600);
     }
+
+    public static void showBarChartInFrame(Map<Integer, Integer> values) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        for (Map.Entry<Integer, Integer> entry : values.entrySet()) {
+            if (entry.getValue() > 0) {
+                dataset.addValue(entry.getValue(), Integer.valueOf(0), entry.getKey());
+            }
+        }
+
+        JFreeChart chart = ChartFactory.createBarChart("statistic", "x", "y", dataset);
+        BarRenderer renderer = (BarRenderer) chart.getCategoryPlot().getRenderer();
+        renderer.setItemMargin(-20);
+        showChartInFrame(chart);
+    }
+
 
     public static void showChartInFrame(JFreeChart chart) {
         JFrame frame = new JFrame("test");
