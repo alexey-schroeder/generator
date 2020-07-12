@@ -3,11 +3,8 @@ package com.lottery.generator.theory;
 import com.lottery.generator.model.LotteryResult;
 import org.springframework.stereotype.Component;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.lottery.generator.theory.TheoryUtils.calculateIntersection;
 

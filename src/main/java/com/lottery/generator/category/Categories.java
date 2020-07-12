@@ -23,6 +23,10 @@ public abstract class Categories {
         initCategoryE();
     }
 
+    public List<Category> getAllCategories() {
+        return List.of(categoryA, categoryB, categoryC, categoryD, categoryE);
+    }
+
     public int calculateAbsIndex(LotteryResult lotteryResult) {
         return calculateIndexes(lotteryResult).stream().map(index -> Math.abs(index)).mapToInt(Integer::intValue).sum();
     }
@@ -41,6 +45,14 @@ public abstract class Categories {
 
         return List.of(a, b, c, d, e);
     }
+
+    public Category getCategoryByIndexInBasisNumbers(int index) {
+        return getAllCategories().stream().
+                filter(category -> category.getIndexInBasisNumbers() == index).
+                findFirst().
+                orElseThrow();
+    }
+
     protected abstract void initCategoryA();
 
     protected abstract void initCategoryB();

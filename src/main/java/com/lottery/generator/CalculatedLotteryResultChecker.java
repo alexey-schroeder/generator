@@ -2,9 +2,9 @@ package com.lottery.generator;
 
 import com.lottery.generator.model.CheckResult;
 import com.lottery.generator.model.LotteryResult;
+import com.lottery.generator.model.TheoryResult;
 import com.lottery.generator.theory.AllBasisNumbersWereGotYetTheory;
 import com.lottery.generator.theory.LotteryResultContainsXNumbersFromLastResults;
-import com.lottery.generator.model.TheoryResult;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -49,20 +49,33 @@ public class MillionDayItalyLotteryResultMapper extends LotteryResultMapper {
     }
 
     private int replaceMonthStringWithNumber(String monthString) {
-        return switch (monthString) {
-            case "Dicembre" -> 12;
-            case "Novembre" -> 11;
-            case "Ottobre" -> 10;
-            case "Settembre" -> 9;
-            case "Agosto" -> 8;
-            case "Luglio" -> 7;
-            case "Giugno" -> 6;
-            case "Maggio" -> 5;
-            case "Aprile" -> 4;
-            case "Marzo" -> 3;
-            case "Febbraio" -> 2;
-            case "Gennaio" -> 1;
-            default -> throw new IllegalStateException("Unexpected value: " + monthString);
-        };
+        switch (monthString) {
+            case "Dicembre":
+                return 12;
+            case "Novembre":
+                return 11;
+            case "Ottobre":
+                return  10;
+            case "Settembre":
+                return  9;
+            case "Agosto":
+                return 8;
+            case "Luglio":
+                return 7;
+            case "Giugno":
+                return 6;
+            case "Maggio":
+                return 5;
+            case "Aprile":
+                return 4;
+            case "Marzo":
+                return 3;
+            case "Febbraio":
+                return 2;
+            case "Gennaio":
+                return 1;
+            default: throw new IllegalStateException("Unexpected value: " + monthString);
+        }
+
     }
 }

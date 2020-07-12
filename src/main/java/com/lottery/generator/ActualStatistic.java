@@ -62,17 +62,17 @@ public class ActualStatistic {
                 .collect(Collectors.toList());
     }
 
-    public static Map<Integer, List<Integer>> getLotteryCountsWithoutNumber(List<LotteryResult> lotteryResults) {
+    public static Map<Integer, List<Integer>> getLotteryCountsMapWithoutNumber(List<LotteryResult> lotteryResults, int maxBasisNumber) {
         Map<Integer, List<Integer>> result = new HashMap<>();
-        for (int i = 1; i <= 50; i++) {
+        for (int i = 1; i <= maxBasisNumber; i++) {
             List<Integer> integerList = getLotteryCountsWithoutNumber(lotteryResults, i);
             result.put(i, integerList);
         }
         return result;
     }
 
-    public static void printNumbersWithMaxPause(List<LotteryResult> lotteryResults) {
-        Map<Integer, List<Integer>> lotteryCountsWithoutNumber = getLotteryCountsWithoutNumber(lotteryResults);
+    public static void printNumbersWithMaxPause(List<LotteryResult> lotteryResults, int maxBusisNumber) {
+        Map<Integer, List<Integer>> lotteryCountsWithoutNumber = getLotteryCountsMapWithoutNumber(lotteryResults, maxBusisNumber);
         Map<List<Integer>, Integer> inversedMap = lotteryCountsWithoutNumber.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
@@ -156,8 +156,88 @@ public class ActualStatistic {
         return list.stream().map(i -> i.toString()).collect(Collectors.joining());
     }
 
-    private static int getBasisNumberIndexInCategory(LotteryResult lotteryResult, Category category) {
+    public static int getBasisNumberIndexInCategory(LotteryResult lotteryResult, Category category) {
         int basisNumberInCategory = lotteryResult.getBasisNumbers().get(category.getIndexInBasisNumbers());
         return category.getIndexForNumber(basisNumberInCategory);
+    }
+
+    /**
+     * @param lotteryResults
+     * @param categories
+     * @param threshold
+     * @return список позиций на которых стоит нуль -> количество этих позиций в прошлах резултатах
+     * например 0_3_4 -> 125 , значит варианты где на нулевом,третьем и четвертом месте были нули
+     * встречаются 125 раз
+     */
+    public static List<Map.Entry<String, Integer>> calculateStatisticZeroPositionsInResult(List<LotteryResult> lotteryResults, Categories categories, double threshold) {
+        Map<String, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < lotteryResults.size(); i++) {
+            LotteryResult lotteryResult = lotteryResults.get(i);
+            List<Integer> basisNumbers = lotteryResult.getBasisNumbers();
+            for (int a = 0; a < basisNumbers.size() - 2; a++) {
+                Category categoryA = categories.getCategoryByIndexInBasisNumbers(a);
+                if (categoryA.getIndexForNumber(basisNumbers.get(a)) == 0) {
+                    for (int b = a + 1; b < basisNumbers.size() - 1; b++) {
+                        Category categoryB = categories.getCategoryByIndexInBasisNumbers(b);
+                        int indexForB = categoryB.getIndexForNumber(basisNumbers.get(b));
+                        if (indexForB == 0) {
+                            for (int c = b + 1; c < basisNumbers.size(); c++) {
+                                Category categoryC = categories.getCategoryByIndexInBasisNumbers(c);
+                                int indexForC = categoryC.getIndexForNumber(basisNumbers.get(c));
+                                if (indexForC == 0) {
+                                    map.merge(a + "_" + b + "_" + c, 1, (integer, integer2) -> integer + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(map.entrySet());
+        list.sort((o1, o2) -> o2.getValue() - o1.getValue());
+        return list;
+
+    }
+
+    public static List<List<Integer>> calculateMinimalListWithZerosByThreshold(List<Map.Entry<String, Integer>> entries, int place, double threshold) {
+        List<Map.Entry<String, Integer>> listWitZerosOnStart = entries.stream()
+                .filter(entry -> entry.getKey().contains("" + place))
+                .collect(Collectors.toList());
+
+
+        boolean found = false;
+        int index;
+        int sum = 0;
+        for (index = 0; index < listWitZerosOnStart.size() && !found; index++) {
+            Map.Entry<String, Integer> entry = listWitZerosOnStart.get(index);
+            sum = sum + entry.getValue();
+            found = sum >= threshold;
+        }
+
+        return listWitZerosOnStart.subList(0, index).stream()
+                .map(entry -> entry.getKey())
+                .map(string -> {
+                    String[] strings = string.split("_");
+                    return Arrays.stream(strings).map(Integer::valueOf).collect(Collectors.toList());
+                })
+                .collect(Collectors.toList());
+    }
+
+    public static int getBasePositionWithZero(List<LotteryResult> lotteryResults, Categories categories) {
+
+        long maxCount = 0;
+        int result = -1;
+        for (int index = 0; index < lotteryResults.get(0).getBasisNumbers().size(); index++) {
+            List<List<Integer>> indexes = lotteryResults.stream().map(lotteryResult -> categories.calculateIndexes(lotteryResult)).collect(Collectors.toList());
+            int finalIndex = index;
+            long listsWithZerroOnIndex = indexes.stream().filter(indexesList -> indexesList.get(finalIndex).equals(0)).count();
+            if (listsWithZerroOnIndex > maxCount) {
+                maxCount = listsWithZerroOnIndex;
+                result = index;
+            }
+        }
+        return result;
     }
 }
