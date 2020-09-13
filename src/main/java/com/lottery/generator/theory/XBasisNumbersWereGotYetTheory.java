@@ -15,7 +15,6 @@ public class XBasisNumbersWereGotYetTheory {
         for (LotteryResult lotteryResult : oldLotteryResults) {
             List<Integer> intersection = calculateIntersection(newNumbers, lotteryResult.getBasisNumbers());
             if (intersection.size() >= minSameNumbersAmount) {
-                intersection.sort(Integer::compareTo);
                 result.add(lotteryResult);
             }
         }

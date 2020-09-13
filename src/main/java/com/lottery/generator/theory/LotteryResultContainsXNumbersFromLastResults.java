@@ -23,8 +23,8 @@ package com.lottery.generator.theory;
  что вероятность повтора определяется параметром probabilityOfXNumberRepeatingInPercent
  */
 
+import com.lottery.generator.filter.PredictedResultFilter;
 import com.lottery.generator.model.LotteryResult;
-import com.lottery.generator.model.TheoryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,9 +55,9 @@ public class LotteryResultContainsXNumbersFromLastResults {
     @Autowired
     private XBasisNumbersWereGotYetTheory xBasisNumbersWereGotYetTheory;
 
-    public TheoryResult hasXSameNumbersFromLastResult(LotteryResult newNumbers, List<LotteryResult> oldLotteryResults) {
+    public PredictedResultFilter hasXSameNumbersFromLastResult(LotteryResult newNumbers, List<LotteryResult> oldLotteryResults) {
         LotteryResultContainsXNumbersFromLastResultsWithDeepSearch withDeepSearch = new LotteryResultContainsXNumbersFromLastResultsWithDeepSearch();
-        TheoryResult resultWithDeepSearch = withDeepSearch.hasXSameNumbersFromLastResult(newNumbers, oldLotteryResults);
+        PredictedResultFilter resultWithDeepSearch = withDeepSearch.hasXSameNumbersFromLastResult(newNumbers, oldLotteryResults);
         if (resultWithDeepSearch.getResult()) {
             return resultWithDeepSearch;
         }
@@ -71,9 +71,9 @@ public class LotteryResultContainsXNumbersFromLastResults {
                 .collect(Collectors.toCollection(ArrayList::new));
 
         if (lotteryResultsInActualYear.isEmpty()) {
-            return TheoryResult.builder()
+            return PredictedResultFilter.builder()
                     .result(false)
-                    .theoryName(getClass().getSimpleName())
+                    .filterName(getClass().getSimpleName())
                     .reason(MessageFormat.format("no old lottery results exist in actual year {0}", actualYear))
                     .build();
         }
@@ -81,8 +81,8 @@ public class LotteryResultContainsXNumbersFromLastResults {
         LotteryResult oldLotteryResultToCompare = lotteryResultsInActualYear.get(0);
         List<Integer> intersection = calculateIntersection(newNumbers.getBasisNumbers(), oldLotteryResultToCompare.getBasisNumbers());
         if (intersection.size() < maxAmountOfSameNumbers) {
-            return TheoryResult.builder()
-                    .theoryName(getClass().getSimpleName())
+            return PredictedResultFilter.builder()
+                    .filterName(getClass().getSimpleName())
                     .result(false)
                     .reason(MessageFormat.format(
                             "in last lottery result was found same numbers: {0}. It is less than parameter: {1}",
@@ -91,8 +91,8 @@ public class LotteryResultContainsXNumbersFromLastResults {
         }
 
         if (intersection.size() > maxAmountOfSameNumbers) {
-            return TheoryResult.builder()
-                    .theoryName(getClass().getSimpleName())
+            return PredictedResultFilter.builder()
+                    .filterName(getClass().getSimpleName())
                     .result(true)
                     .reason(MessageFormat.format(
                             "in last lottery result was found same numbers: {0}. It is greater than parameter: {1}",
@@ -107,8 +107,8 @@ public class LotteryResultContainsXNumbersFromLastResults {
         //количество повторов в этом году уже больше или равно чем в среднем
         if (sameNumbersCount >= maxAmountOfLotteryResultsWithXSameNumbersFromLastResultProYear) {
             boolean result = probabilityOfXNumberRepeatingInPercent <= random;
-            return TheoryResult.builder()
-                    .theoryName(getClass().getSimpleName())
+            return PredictedResultFilter.builder()
+                    .filterName(getClass().getSimpleName())
                     .result(result)
                     .reason(MessageFormat.format(
                             "it was found {0} old lottery results in actual year {1, number,#}, that is greater than " +
@@ -119,8 +119,8 @@ public class LotteryResultContainsXNumbersFromLastResults {
                     .build();
         } else {
             boolean result = probabilityOfXNumberRepeatingInPercent * 3 <= random;
-            return TheoryResult.builder()
-                    .theoryName(getClass().getSimpleName())
+            return PredictedResultFilter.builder()
+                    .filterName(getClass().getSimpleName())
                     .result(result)
                     .reason(MessageFormat.format(
                             "it was found {0} old lottery results in actual year {1, number,#}, that is smaller than " +
@@ -158,13 +158,13 @@ public class LotteryResultContainsXNumbersFromLastResults {
 
         private int probabilityOfXNumberRepeatingInPercent = 10;
 
-        public TheoryResult hasXSameNumbersFromLastResult(LotteryResult newNumbers, List<LotteryResult> oldLotteryResults) {
+        public PredictedResultFilter hasXSameNumbersFromLastResult(LotteryResult newNumbers, List<LotteryResult> oldLotteryResults) {
             List<LotteryResult> lotteryResultForCompare = oldLotteryResults.subList(0, maxDeep + 1);
             List<LotteryResult> resultWithSameNumbers = xBasisNumbersWereGotYetTheory.wereBasisNumbersGotYet(newNumbers.getBasisNumbers(), lotteryResultForCompare, maxAmountOfSameNumbers);
 
             if (resultWithSameNumbers.isEmpty()) {
-                return TheoryResult.builder()
-                        .theoryName(this.getClass().getSimpleName())
+                return PredictedResultFilter.builder()
+                        .filterName(this.getClass().getSimpleName())
                         .result(false)
                         .reason(MessageFormat.format(
                                 "no old results with search in deep {0} was found with {1} same numbers",
@@ -175,8 +175,8 @@ public class LotteryResultContainsXNumbersFromLastResults {
             int random = new Random().nextInt((100 - 1) + 1) + 1;
             boolean result = probabilityOfXNumberRepeatingInPercent <= random;
 
-            return TheoryResult.builder()
-                    .theoryName(this.getClass().getSimpleName())
+            return PredictedResultFilter.builder()
+                    .filterName(this.getClass().getSimpleName())
                     .result(result)
                     .oldResults(resultWithSameNumbers)
                     .reason(MessageFormat.format(

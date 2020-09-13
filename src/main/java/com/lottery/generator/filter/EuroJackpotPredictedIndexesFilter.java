@@ -4,7 +4,6 @@ import com.lottery.generator.model.LotteryResult;
 
 import java.util.List;
 
-public interface MillionDayItalyPredictedIndexesFilter {
-
+public interface EuroJackpotPredictedIndexesFilter {
     PredictedResultFilter filter(List<LotteryResult> lotteryResults, List<Integer> predictedIndexes);
 }

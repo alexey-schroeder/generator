@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class NotSymmetricalIndexesFilter implements MillionDayItalyPredictedIndexesFilter {
     @Override
-    public PredictedIndexesFilterResult filter(List<LotteryResult> lotteryResults, List<Integer> predictedIndexes) {
+    public PredictedResultFilter filter(List<LotteryResult> lotteryResults, List<Integer> predictedIndexes) {
         boolean isSymmetrical = predictedIndexes.get(0).equals(predictedIndexes.get(4)) &&
                 predictedIndexes.get(1).equals(predictedIndexes.get(3));
 
@@ -18,9 +18,9 @@ public class NotSymmetricalIndexesFilter implements MillionDayItalyPredictedInde
             reason = MessageFormat.format("The predicted indexes {0} are symmetrical. Indexes may not be symmetrical!", predictedIndexes);
         }
 
-        return PredictedIndexesFilterResult.builder()
+        return PredictedResultFilter.builder()
                 .oldResults(lotteryResults)
-                .predictedIndexes(predictedIndexes)
+                .predictedResult(predictedIndexes)
                 .reason(reason)
                 .result(!isSymmetrical)
                 .build();

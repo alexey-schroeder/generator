@@ -1,14 +1,13 @@
 package com.lottery.generator.predictor;
 
 import com.lottery.generator.category.Category;
+import com.lottery.generator.category.CategoryIndexValues;
 import com.lottery.generator.model.LotteryResult;
 import org.junit.jupiter.api.Test;
 
-import java.time.temporal.ValueRange;
 import java.util.List;
 import java.util.Map;
 
-import static java.time.temporal.ValueRange.of;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CategoryPredictorTest {
@@ -16,12 +15,12 @@ class CategoryPredictorTest {
     @Test
     void getIndexDepthProbabilities_shouldReturnCorrectResult() {
         //given
-        Map<Integer, ValueRange> rangeMap = Map.of(
-                0, of(1, 6),
-                1, of(7, 12),
-                2, of(13, 17),
-                3, of(18, 22),
-                4, of(23, 50));
+        Map<Integer, CategoryIndexValues> rangeMap = Map.of();
+//                0, of(1, 6),
+//                1, of(7, 12),
+//                2, of(13, 17),
+//                3, of(18, 22),
+//                4, of(23, 50));
 
         Category category = new Category("testCategory", 0, rangeMap);
 
@@ -57,12 +56,12 @@ class CategoryPredictorTest {
     @Test
     void nextIndexWithProbabilityInCategory_shouldReturnCorrectResult() {
         //given
-        Map<Integer, ValueRange> rangeMap = Map.of(
-                0, of(1, 10),
-                1, of(11, 20),
-                2, of(21, 30),
-                3, of(31, 40),
-                4, of(41, 50));
+        Map<Integer, CategoryIndexValues> rangeMap = Map.of();
+//                0, of(1, 10),
+//                1, of(11, 20),
+//                2, of(21, 30),
+//                3, of(31, 40),
+//                4, of(41, 50));
 
         Category category = new Category("testCategory", 0, rangeMap);
 

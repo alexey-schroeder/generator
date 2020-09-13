@@ -11,7 +11,7 @@ class NotPossiblePredictedLotteryResultFilterTest {
     @Test
     void filter() {
         NotPossiblePredictedLotteryResultFilter filter = new NotPossiblePredictedLotteryResultFilter(new MillionDayItalyCategories());
-        PredictedIndexesFilterResult result = filter.filter(
+        PredictedResultFilter result = filter.filter(
                 List.of(LotteryResult.builder().
                         basisNumbers(List.of(1,2,3,4,5)).
                         build())

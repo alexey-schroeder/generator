@@ -18,7 +18,7 @@ public class ActualStatistic {
     @Autowired
     private XBasisNumbersWereGotYetTheory xBasisNumbersWereGotYetTheory;
 
-    public void printSameNumbersResultsBySameNumbersAmount(List<LotteryResult> lotteryResults, int sameNumbersAmount) {
+    public  void printSameNumbersResultsBySameNumbersAmount(List<LotteryResult> lotteryResults, int sameNumbersAmount) {
         int sameResults = 0;
         for (int i = 0; i < lotteryResults.size() - 1; i++) {
             List<LotteryResult> subSetLotteryResult = lotteryResults.subList(i + 1, lotteryResults.size() - 1);
@@ -239,5 +239,11 @@ public class ActualStatistic {
             }
         }
         return result;
+    }
+
+    public static Map<List<Integer>, Long> calculateCountOfIndexes(List<LotteryResult> lotteryResults, Categories categories) {
+        return lotteryResults.stream()
+                .map(result -> categories.calculateIndexes(result))
+                .collect(Collectors.groupingBy(e -> e, Collectors.counting()));
     }
 }

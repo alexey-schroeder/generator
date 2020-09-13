@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class MiddleIndexFilter implements MillionDayItalyPredictedIndexesFilter {
     @Override
-    public PredictedIndexesFilterResult filter(List<LotteryResult> lotteryResults, List<Integer> predictedIndexes) {
+    public PredictedResultFilter filter(List<LotteryResult> lotteryResults, List<Integer> predictedIndexes) {
         Integer middleIndex = predictedIndexes.get(2);
         boolean check = middleIndex == 0 || middleIndex == 1 || middleIndex == -1;
         String reason = "";
@@ -17,12 +17,12 @@ public class MiddleIndexFilter implements MillionDayItalyPredictedIndexesFilter 
             reason = MessageFormat.format("The middle index is {0}, but may be 0, 1 or -1", middleIndex);
         }
 
-        return PredictedIndexesFilterResult.builder()
+        return PredictedResultFilter.builder()
                 .filterName(getClass().getSimpleName())
                 .result(check)
                 .reason(reason)
                 .oldResults(lotteryResults)
-                .predictedIndexes(predictedIndexes)
+                .predictedResult(predictedIndexes)
                 .build();
     }
 }

@@ -1,7 +1,7 @@
 package com.lottery.generator.theory;
 
+import com.lottery.generator.filter.PredictedResultFilter;
 import com.lottery.generator.model.LotteryResult;
-import com.lottery.generator.model.TheoryResult;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Component
 public class AllBasisNumbersWereGotYetTheory {
 
-    public TheoryResult existOldLotteryResultWithSameBasisNumbers(List<Integer> newNumbers, List<LotteryResult> oldLotteryResults) {
+    public PredictedResultFilter existOldLotteryResultWithSameBasisNumbers(List<Integer> newNumbers, List<LotteryResult> oldLotteryResults) {
         List<Integer> newNumbersCopy = new ArrayList<>(newNumbers);
         newNumbersCopy.sort(Integer::compareTo);
         String newNumbersCopyAsString = newNumbersCopy.toString();
@@ -22,15 +22,15 @@ public class AllBasisNumbersWereGotYetTheory {
                 .filter(areNumbersEquals(newNumbersCopyAsString))
                 .collect(Collectors.toList());
         if (lotteryResultsWithSameNumbers.isEmpty()) {
-            return TheoryResult.builder()
-                    .theoryName(getClass().getSimpleName())
+            return PredictedResultFilter.builder()
+                    .filterName(getClass().getSimpleName())
                     .result(false)
                     .reason(MessageFormat.format(
                             "There is no old lottery results with the same numbers {0}", newNumbers))
                     .build();
         } else {
-            return TheoryResult.builder()
-                    .theoryName(getClass().getSimpleName())
+            return PredictedResultFilter.builder()
+                    .filterName(getClass().getSimpleName())
                     .result(true)
                     .reason(MessageFormat.format(
                             "Old lottery results with the same numbers {0} found", newNumbers))

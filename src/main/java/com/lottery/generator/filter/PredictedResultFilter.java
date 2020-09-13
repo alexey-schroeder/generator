@@ -10,11 +10,11 @@ import java.util.List;
 @Builder
 @ToString
 @Getter
-public class PredictedIndexesFilterResult {
+public class PredictedResultFilter {
 
     private String filterName;
     private List<LotteryResult> oldResults;
-    private List<Integer> predictedIndexes;
+    private List<Integer> predictedResult;
     private Boolean result; //not boolean(simple type), because it will be used for check if the theory set the value or it was forget
     private String reason;
 }

@@ -2,6 +2,7 @@ package com.lottery.generator;
 
 import com.lottery.generator.category.EuroJackpotCategories;
 import com.lottery.generator.category.MillionDayItalyCategories;
+import com.lottery.generator.model.CheckResult;
 import com.lottery.generator.model.LotteryResult;
 import com.lottery.generator.predictor.MillionDayLotteryPredictor;
 import com.lottery.generator.resultreader.EuroJackpotLotteryResultsReader;
@@ -14,12 +15,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
 public class GeneratorApplication implements CommandLineRunner {
+
+    //https://innen.hessen.de/sites/default/files/media/hmdis/white_list.pdf
 
     @Autowired
     private EuroJackpotLotteryResultsReader euroJackpotLotteryResultsReader;
@@ -60,8 +66,9 @@ public class GeneratorApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        ArrayList<LotteryResult> lotteryResults = millionDayItalyLotteryResultsReader.readLotteryResults();
+        ArrayList<LotteryResult> lotteryResults = euroJackpotLotteryResultsReader.readLotteryResults();
 
+        ChartUtils.saveLotteryResultsCategoriesAsImage(lotteryResults, 55, "millionday.bmp");
 //        boolean basisNumbersGotYet = allBasisNumbersWereGotYetTheory
 //                .wereBasisNumbersGotYet(Arrays.asList(3, 25, 31, 32, 48), lotteryResults);
 //        System.out.println(basisNumbersGotYet);
@@ -71,16 +78,16 @@ public class GeneratorApplication implements CommandLineRunner {
 //        actualStatistic.printEachNumberExistInLotteryResult(lotteryResults);
 //        actualStatistic.printNumbersWithMaxPause(lotteryResults, 55);
 //        calculatedLotteryResultChecker.setOldLotteryResults(lotteryResults);
-//        CheckResult check = calculatedLotteryResultChecker.check(LotteryResult.builder()
+//        CheckResult checkResult = calculatedLotteryResultChecker.checkResult(LotteryResult.builder()
 //                .basisNumbers(Arrays.asList(3, 7, 19, 34, 35))
 //                .build());
-//        System.out.println(check);
+//        System.out.println(checkResult);
 
 //        calculatedLotteryResultChecker.setOldLotteryResults(lotteryResults);
 //        List<LotteryResult> newResults = new ArrayList<>(8);
 //        while (newResults.size() != 8) {
 //            LotteryResult generatedLotteryResult = resultGenerator.generateLotteryResult();
-//            CheckResult checkResult = calculatedLotteryResultChecker.check(generatedLotteryResult);
+//            CheckResult checkResult = calculatedLotteryResultChecker.checkResult(generatedLotteryResult);
 //            if (checkResult.isApproved()) {
 //                newResults.add(generatedLotteryResult);
 //            } else {
@@ -106,30 +113,29 @@ public class GeneratorApplication implements CommandLineRunner {
 //            System.out.println(MessageFormat.format("{0} -> {1}", i, count * 1.0 / lotteryResults.size()));
 //        }
 
-        int index = 3;
-
-        List<List<Integer>> lists = lotteryResults.stream().map(result -> millionDayItalyCategories.calculateIndexes(result)).collect(Collectors.toList());
-        long listsWithZerroInMiddle = lists.stream().filter(indexesList -> indexesList.get(index).equals(0)).count();
+//        int index = 0;
 //
-        System.out.println("with 0 in index " + index + " : " + listsWithZerroInMiddle * 1.0 / lotteryResults.size());
-
-        long countOfListWithOneInMiddle = lists.stream().filter(indexesList -> indexesList.get(index).equals(1)).count();
-//        long countOfListWithFirstNumbersGreaterThanZero = lists.stream().filter(indexesList -> indexesList.get(0) > 0 && indexesList.get(1) > 0).count();
-        System.out.println("with 1 in index " + index + " : " + countOfListWithOneInMiddle * 1.0 / lotteryResults.size());
-        long countOfListWithMinusOneInMiddle = lists.stream().filter(indexesList -> indexesList.get(index).equals(-1)).count();
-        System.out.println("with -1 in index " + index + " : " + countOfListWithMinusOneInMiddle * 1.0 / lotteryResults.size());
-
-        long countWithSymmetricalIndexes = lists.stream().filter(
-                indexesList ->
-                        indexesList.get(0).equals(indexesList.get(4)) &&
-                                indexesList.get(1).equals(indexesList.get(3))).count();
-
-        System.out.println("with symmetrical indexes: " + countWithSymmetricalIndexes * 1.0 / lists.size());
+//        List<List<Integer>> lists = lotteryResults.stream().map(result -> euroJackpotCategories.calculateIndexes(result)).collect(Collectors.toList());
+//        long listsWithZerroInMiddle = lists.stream().filter(indexesList -> indexesList.get(index).equals(0)).count();
+////
+//        System.out.println("with 0 in index " + index + " : " + listsWithZerroInMiddle * 1.0 / lotteryResults.size());
+//
+//        long countOfListWithOneInMiddle = lists.stream().filter(indexesList -> indexesList.get(index).equals(1)).count();
+////        long countOfListWithFirstNumbersGreaterThanZero = lists.stream().filter(indexesList -> indexesList.get(0) > 0 && indexesList.get(1) > 0).count();
+//        System.out.println("with 1 in index " + index + " : " + countOfListWithOneInMiddle * 1.0 / lotteryResults.size());
+//        long countOfListWithMinusOneInMiddle = lists.stream().filter(indexesList -> indexesList.get(index).equals(-1)).count();
+//        System.out.println("with -1 in index " + index + " : " + countOfListWithMinusOneInMiddle * 1.0 / lotteryResults.size());
+//
+//        long countWithSymmetricalIndexes = lists.stream().filter(
+//                indexesList ->
+//                        indexesList.get(0).equals(indexesList.get(4)) &&
+//                                indexesList.get(1).equals(indexesList.get(3))).count();
+//
+//        System.out.println("with symmetrical indexes: " + countWithSymmetricalIndexes * 1.0 / lists.size());
 //        lists.forEach(System.out::println);
 
 
-
-       millionDayLotteryPredictor.predictBasisNumbers(lotteryResults);
+//        millionDayLotteryPredictor.predictBasisNumbers(lotteryResults);
 //        bestPlaces.forEach(System.out::println);
 //        int frequency = 3;
 //        long countByFrequency = lotteryResults.stream()
@@ -140,20 +146,58 @@ public class GeneratorApplication implements CommandLineRunner {
 //                .count();
 //        System.out.println(countByFrequency * 1.0 / lotteryResults.size());
 
+//        List<Integer> indexes = List.of(0,0,-1,0,1);
+//
 //        int size = lotteryResults.stream()
-//                .map(result -> millionDayItalyCategories.calculateIndexes(result))
+//                .map(result -> euroJackpotCategories.calculateIndexes(result))
 //                .filter(result ->
-//                        result.get(0).equals(0) &&
-//                                result.get(1).equals(0) &&
-//                                result.get(2).equals(0) &&
-//                                result.get(3).equals(-2) &&
-//                                result.get(4).equals(-2))
+//                        result.get(0).equals(indexes.get(0)) &&
+//                                result.get(1).equals(indexes.get(1)) &&
+//                                result.get(2).equals(indexes.get(2)) &&
+//                                result.get(3).equals(indexes.get(3)) &&
+//                                result.get(4).equals(indexes.get(4)))
 //                .collect(Collectors.toList()).size();
-//        System.out.println("[0,0,0,-2,-2]: " + size + " from " + lotteryResults.size());
+//        System.out.println(indexes+": " + size + " from " + lotteryResults.size() + "; " + size * 1.0 / lotteryResults.size() * 100 + "%");
+//
+//        lotteryResults.stream()
+//                .map(result -> euroJackpotCategories.calculateIndexes(result))
+//                .forEach(System.out::println);
+
+//        Map<List<Integer>, Long> counts =
+//                ActualStatistic.calculateCountOfIndexes(lotteryResults, euroJackpotCategories);
+//        counts.entrySet().forEach(System.out::println);
+////        predictedIndexes.forEach(System.out::println);
+////        lotteryResults.stream().map(result -> euroJackpotCategories.calculateIndexes(result)).forEach(System.out::println);
+//        int size = counts.entrySet().stream().filter(entry -> entry.getValue() < 2).collect(Collectors.toList()).size();
+//
+//        System.out.println(size*1.0 / lotteryResults.size());
+
+//        List<List<Integer>> indexes = lotteryResults.stream().map(result -> euroJackpotCategories.calculateIndexes(result)).collect(Collectors.toList());
+//        boolean result = Collections.frequency(indexes, predictedIndexes) >= minFrequency;
 
 
-//        predictedIndexes.forEach(System.out::println);
-//        lotteryResults.stream().map(result -> euroJackpotCategories.calculateIndexes(result)).forEach(System.out::println);
+//        System.out.println("#########");
+//        lotteryResults.forEach(GeneratorApplication::print);
 
+//        actualStatistic.printSameNumbersResultsBySameNumbersAmountAndMaxDeepOfSearchInAllResults(lotteryResults, 3, 12);
+
+        List<Integer> forbiddenNumbers = List.of();
+        LotteryResult lotteryResult = LotteryResult.builder()
+                .basisNumbers(List.of(9, 19, 32, 35, 50))
+                .additionallyNumbers(List.of(1, 2))
+                .date(Instant.now())
+                .build();
+
+        calculatedLotteryResultChecker.setOldLotteryResults(lotteryResults);
+        CheckResult checkResult = calculatedLotteryResultChecker.check(lotteryResult, forbiddenNumbers);
+        System.out.println(checkResult.isApproved() + ":  reason -> " + checkResult.getReason());
+
+    }
+
+    private static void print(LotteryResult lotteryResult) {
+        String collect = lotteryResult.getBasisNumbers().stream().map(Object::toString).collect(Collectors.joining(";"));
+        String date = DateTimeFormatter.ISO_INSTANT.format(lotteryResult.getDate().truncatedTo(ChronoUnit.DAYS));
+
+        System.out.println(date.replace("T00:00:00Z", "") + ";" + collect);
     }
 }

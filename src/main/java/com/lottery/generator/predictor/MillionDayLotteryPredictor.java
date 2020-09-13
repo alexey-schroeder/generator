@@ -4,7 +4,7 @@ import com.lottery.generator.ActualStatistic;
 import com.lottery.generator.category.Category;
 import com.lottery.generator.category.MillionDayItalyCategories;
 import com.lottery.generator.filter.MillionDayItalyPredictedIndexesFilter;
-import com.lottery.generator.filter.PredictedIndexesFilterResult;
+import com.lottery.generator.filter.PredictedResultFilter;
 import com.lottery.generator.model.LotteryResult;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +77,7 @@ public class MillionDayLotteryPredictor {
 
     private boolean areIndexesValid(List<LotteryResult> oldLotteryResults, List<Integer> result) {
         for (MillionDayItalyPredictedIndexesFilter filter : filters) {
-            PredictedIndexesFilterResult filterResult = filter.filter(oldLotteryResults, result);
+            PredictedResultFilter filterResult = filter.filter(oldLotteryResults, result);
             if (!filterResult.getResult()) {
                 log.info(MessageFormat.format("Predicted indexes {0} are not valid. Reason: {1}, Filter: {2}", result, filterResult.getReason(), filter.getClass().getSimpleName()));
                 return false;
