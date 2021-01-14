@@ -14,7 +14,7 @@ public class ForbiddenNumbersFilter {
         List<Integer> intersection = calculateIntersection(lotteryResult.getBasisNumbers(), forbiddenNumbers);
         String reason = "no intersection";
         if (!intersection.isEmpty()) {
-            reason = "There is intersection: " + intersection;
+            reason = "There is intersection with forbidden numbers: " + intersection;
         }
 
         return PredictedResultFilter.builder()

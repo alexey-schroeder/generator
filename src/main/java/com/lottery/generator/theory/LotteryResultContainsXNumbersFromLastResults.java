@@ -172,7 +172,7 @@ public class LotteryResultContainsXNumbersFromLastResults {
                         .build();
             }
 
-            int random = new Random().nextInt((100 - 1) + 1) + 1;
+            int random = new Random().nextInt(100) + 1;
             boolean result = probabilityOfXNumberRepeatingInPercent <= random;
 
             return PredictedResultFilter.builder()
@@ -187,5 +187,5 @@ public class LotteryResultContainsXNumbersFromLastResults {
         }
     }
 
-    //TODO написать проверку для случая, что число не может выпадать три раза вподрят
+    //TODO написать проверку для случая, что число не может выпадать три раза подряд
 }

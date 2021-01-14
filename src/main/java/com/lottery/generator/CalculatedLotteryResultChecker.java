@@ -1,6 +1,7 @@
 package com.lottery.generator;
 
 import com.lottery.generator.category.EuroJackpotCategories;
+import com.lottery.generator.filter.EvenOrOddNumbersOnlyFilter;
 import com.lottery.generator.filter.ForbiddenNumbersFilter;
 import com.lottery.generator.filter.PredictedResultFilter;
 import com.lottery.generator.filter.SeldomIndexListFilter;
@@ -36,13 +37,16 @@ public class CalculatedLotteryResultChecker {
     @Autowired
     private ForbiddenNumbersFilter forbiddenNumbersFilter;
 
+    @Autowired
+    private EvenOrOddNumbersOnlyFilter evenOrOddNumbersOnlyFilter;
+
     public CheckResult check(LotteryResult lotteryResult, List<Integer> forbiddenNumbers) {
         if (oldLotteryResults == null || oldLotteryResults.isEmpty()) {
             throw new IllegalStateException("Old lottery results are not set!");
         }
 
         PredictedResultFilter resultFilter = forbiddenNumbersFilter.filter(lotteryResult, forbiddenNumbers);
-        if(!resultFilter.getResult()){
+        if (!resultFilter.getResult()) {
             return CheckResult.builder()
                     .resultFilter(resultFilter)
                     .reason(resultFilter.getReason())
@@ -55,6 +59,7 @@ public class CalculatedLotteryResultChecker {
             return CheckResult.builder()
                     .resultFilter(wereBasisNumbersGotYetResult)
                     .approved(false)
+                    .reason(wereBasisNumbersGotYetResult.getReason())
                     .build();
         }
 
@@ -63,6 +68,7 @@ public class CalculatedLotteryResultChecker {
             return CheckResult.builder()
                     .resultFilter(theoryResult)
                     .approved(false)
+                    .reason(theoryResult.getReason())
                     .build();
         }
 
@@ -73,6 +79,16 @@ public class CalculatedLotteryResultChecker {
             return CheckResult.builder()
                     .resultFilter(seldomIndexFilterResult)
                     .approved(false)
+                    .reason(seldomIndexFilterResult.getReason())
+                    .build();
+        }
+
+        PredictedResultFilter evenOrOddNumbersOnlyResult = evenOrOddNumbersOnlyFilter.filter(lotteryResult);
+        if (!evenOrOddNumbersOnlyResult.getResult()) {
+            return CheckResult.builder()
+                    .resultFilter(evenOrOddNumbersOnlyResult)
+                    .approved(false)
+                    .reason(evenOrOddNumbersOnlyResult.getReason())
                     .build();
         }
 

@@ -19,7 +19,9 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -68,7 +70,7 @@ public class GeneratorApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         ArrayList<LotteryResult> lotteryResults = euroJackpotLotteryResultsReader.readLotteryResults();
 
-        ChartUtils.saveLotteryResultsCategoriesAsImage(lotteryResults, 55, "millionday.bmp");
+//        ChartUtils.saveLotteryResultsCategoriesAsImage(lotteryResults, 55, "millionday.bmp");
 //        boolean basisNumbersGotYet = allBasisNumbersWereGotYetTheory
 //                .wereBasisNumbersGotYet(Arrays.asList(3, 25, 31, 32, 48), lotteryResults);
 //        System.out.println(basisNumbersGotYet);
@@ -180,18 +182,44 @@ public class GeneratorApplication implements CommandLineRunner {
 //        lotteryResults.forEach(GeneratorApplication::print);
 
 //        actualStatistic.printSameNumbersResultsBySameNumbersAmountAndMaxDeepOfSearchInAllResults(lotteryResults, 3, 12);
+        List<Integer> forbiddenNumbers = List.of(11, 17, 23);
+        List<List<Integer>> scheins = new ArrayList<>(8);
+        while (scheins.size() < 8) {
+            List<Integer> numbers = new ArrayList<>(5);
+            while (numbers.size() < 5) {
+                int randomNum = ThreadLocalRandom.current().nextInt(1, 50 + 1);
+                if(!numbers.contains(randomNum)) {
+                    numbers.add(randomNum);
+                }
+            }
+            Collections.sort(numbers);
 
-        List<Integer> forbiddenNumbers = List.of();
-        LotteryResult lotteryResult = LotteryResult.builder()
-                .basisNumbers(List.of(9, 19, 32, 35, 50))
-                .additionallyNumbers(List.of(1, 2))
-                .date(Instant.now())
-                .build();
+            LotteryResult lotteryResult = LotteryResult.builder()
+                    .basisNumbers(numbers)
+                    .additionallyNumbers(List.of())
+                    .date(Instant.now())
+                    .build();
 
-        calculatedLotteryResultChecker.setOldLotteryResults(lotteryResults);
-        CheckResult checkResult = calculatedLotteryResultChecker.check(lotteryResult, forbiddenNumbers);
-        System.out.println(checkResult.isApproved() + ":  reason -> " + checkResult.getReason());
+            calculatedLotteryResultChecker.setOldLotteryResults(lotteryResults);
+            CheckResult checkResult = calculatedLotteryResultChecker.check(lotteryResult, forbiddenNumbers);
+            if (checkResult.isApproved()) {
+                scheins.add(numbers);
+            }
+        }
 
+        scheins.forEach(System.out::println);
+
+        // System.out.println(checkResult.isApproved() + ":  reason -> " + checkResult.getReason());
+
+//        List<LotteryResult> resultsWithOnlyAddOrNotAddNumbers = new ArrayList<>();
+//        lotteryResults.forEach(lotteryResult -> {
+//            int sum = lotteryResult.getBasisNumbers().stream().mapToInt(number -> number % 2).sum();
+//            if(sum == 4){
+//                resultsWithOnlyAddOrNotAddNumbers.add(lotteryResult);
+//            }
+//        });
+//
+//        System.out.println(resultsWithOnlyAddOrNotAddNumbers.size()*1.0/ lotteryResults.size());
     }
 
     private static void print(LotteryResult lotteryResult) {
