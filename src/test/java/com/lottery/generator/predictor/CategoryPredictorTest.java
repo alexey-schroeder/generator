@@ -75,11 +75,14 @@ class CategoryPredictorTest {
                 createLotteryResult(List.of(8, 14, 18, 23, 41))
         );
 
+        // CategoryPredictor reverses the supplied history before counting transitions.
+        // For the first basis number the chronological category-index sequence is:
+        // 0,3,1,0,1,1,0,2,1,1,0,0,0.
         Map<Integer, Map<Integer, Double>> expectedNextIndexProbabilities = Map.of(
-                0, Map.of(0, 0.25, 2, 0.5, 3, 0.25),
-                1, Map.of(0, 0.25, 2, 0.5, 3, 0.25),
+                0, Map.of(0, 0.4, 1, 0.2, 2, 0.2, 3, 0.2),
+                1, Map.of(0, 0.6, 1, 0.4),
                 2, Map.of(1, 1.0),
-                3, Map.of(2, 1.0)
+                3, Map.of(1, 1.0)
         );
 
         CategoryPredictor categoryPredictor = new CategoryPredictorFactory().categoryPredictor(category, lotteryResults);
