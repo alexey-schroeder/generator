@@ -1,0 +1,35 @@
+name: Rarity hypotheses
+
+on:
+  push:
+    branches:
+      - rarity-rules-refresh
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Verify committed archive is current enough
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          first = Path('src/main/resources/eurojackpot_archiv.csv').read_text(encoding='utf-8').splitlines()[0]
+          latest = first.split(',', 1)[0][:10]
+          print(f'LOCAL_ARCHIVE|latest={latest}')
+          assert latest >= '2026-09-04', f'Local archive is stale: {latest}'
+          PY
+
+      - name: Run all tests using local resources only
+        run: ./mvnw test
