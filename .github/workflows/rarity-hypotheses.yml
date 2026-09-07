@@ -12,11 +12,80 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Download current LOTTO Bayern Eurojackpot archive
+        run: |
+          python3 - <<'PY'
+          import io
+          import re
+          import urllib.request
+          import zipfile
+          from datetime import datetime
+          from pathlib import Path
+
+          url = "https://www.lotto-bayern.de/static/gamebroker_2/de/download_files/archiv_eurojackpot.zip"
+          request = urllib.request.Request(url, headers={"User-Agent": "generator-rarity-analysis/1.0"})
+          with urllib.request.urlopen(request, timeout=60) as response:
+              archive = response.read()
+
+          with zipfile.ZipFile(io.BytesIO(archive)) as zf:
+              txt_files = [name for name in zf.namelist() if name.lower().endswith(".txt")]
+              preferred = [name for name in txt_files if "eurojackpot" in Path(name).name.lower()]
+              member = preferred[0] if preferred else txt_files[0]
+              raw = zf.read(member)
+
+          text = None
+          for encoding in ("utf-8-sig", "utf-8", "latin-1", "cp1252"):
+              try:
+                  text = raw.decode(encoding)
+                  break
+              except UnicodeDecodeError:
+                  pass
+          if text is None:
+              text = raw.decode("utf-8", errors="replace")
+
+          rows = []
+          for raw_line in text.splitlines():
+              line = raw_line.strip()
+              if not re.match(r"^\d{1,2}\s+\d{1,2}\s+\d{4}\b", line):
+                  continue
+              tokens = re.findall(r"\d+", line)
+              if len(tokens) < 10:
+                  continue
+              day, month, year = map(int, tokens[:3])
+              numbers = list(map(int, tokens[3:10]))
+              main = numbers[:5]
+              euro = numbers[5:7]
+              if len(set(main)) != 5 or not all(1 <= n <= 50 for n in main):
+                  continue
+              if len(set(euro)) != 2 or not all(1 <= n <= 12 for n in euro):
+                  continue
+              date = datetime(year, month, day)
+              rows.append((date, sorted(main), sorted(euro)))
+
+          # De-duplicate by draw date, then write newest-first in the legacy resource format.
+          rows_by_date = {row[0].date(): row for row in rows}
+          rows = sorted(rows_by_date.values(), key=lambda row: row[0], reverse=True)
+          assert len(rows) > 900, f"Expected >900 draws, got {len(rows)}"
+          assert rows[0][0].date().isoformat() >= "2026-09-04", f"Archive is stale: {rows[0][0].date()}"
+
+          output = Path("src/main/resources/eurojackpot_archiv.csv")
+          output.write_text(
+              "".join(
+                  f"{date.date().isoformat()}T00:00:00Z,{ '-'.join(map(str, main)) },{ '-'.join(map(str, euro)) }\n"
+                  for date, main, euro in rows
+              ),
+              encoding="utf-8",
+          )
+          print(f"CURRENT_ARCHIVE|draws={len(rows)}|from={rows[-1][0].date()}|to={rows[0][0].date()}|source={url}")
+          PY
+
       - name: Set up Java 14
         uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: '14'
           cache: maven
+
       - name: Run rarity hypothesis tests
         run: ./mvnw -Dtest=RareCombinationHypothesesTest test
