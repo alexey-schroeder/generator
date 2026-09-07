@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -17,13 +16,14 @@ public class EuroJackpotLotteryResultMapper extends LotteryResultMapper {
     @Override
     public LotteryResult lineToLotteryResult(String resultLine) throws ParseException {
         String[] columns = resultLine.split(",");
-        if (columns.length != 5) {
-            String wrongColumnsSizeMessage =  MessageFormat.format(
-                    "The line \"{0}\" can not be parsed. Reason: the line should have five columns", resultLine);
+        if (columns.length != 3 && columns.length != 5) {
+            String wrongColumnsSizeMessage = MessageFormat.format(
+                    "The line \"{0}\" can not be parsed. Reason: the line should have three normalized columns or five legacy columns",
+                    resultLine);
             throw new IllegalArgumentException(wrongColumnsSizeMessage);
         }
 
-        Instant date = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").parse(columns[0]).toInstant();
+        Instant date = Instant.parse(columns[0]);
 
         String[] basicNumbersArray = columns[1].split("-");
         if (basicNumbersArray.length != 5) {
@@ -34,9 +34,8 @@ public class EuroJackpotLotteryResultMapper extends LotteryResultMapper {
 
         List<Integer> basicNumberList = Arrays.stream(basicNumbersArray)
                 .map(Integer::valueOf)
+                .sorted()
                 .collect(Collectors.toList());
-
-        basicNumberList.sort(Integer::compareTo);
 
         String[] additionallyNumbersArray = columns[2].split("-");
         if (additionallyNumbersArray.length != 2) {
@@ -45,10 +44,10 @@ public class EuroJackpotLotteryResultMapper extends LotteryResultMapper {
             throw new IllegalArgumentException(wrongColumnsSizeMessage);
         }
 
-        List<Integer> additionallyNumberList = Arrays.stream(additionallyNumbersArray).map(Integer::valueOf)
+        List<Integer> additionallyNumberList = Arrays.stream(additionallyNumbersArray)
+                .map(Integer::valueOf)
+                .sorted()
                 .collect(Collectors.toList());
-
-        additionallyNumberList.sort(Integer::compareTo);
 
         return LotteryResult.builder()
                 .date(date)
