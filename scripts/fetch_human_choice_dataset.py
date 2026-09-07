@@ -16,6 +16,12 @@ START = date(2022, 3, 25)  # current 5/50 + 2/12 rules
 ODDS = 139_838_160
 TIP_PRICE = 2.0
 
+# (main hits, euro hits) for EuroJackpot classes 1..12.
+CLASS_HITS = {
+    1:(5,2), 2:(5,1), 3:(5,0), 4:(4,2), 5:(4,1), 6:(3,2),
+    7:(4,0), 8:(2,2), 9:(3,1), 10:(3,0), 11:(1,2), 12:(2,1),
+}
+
 
 def strip_tags(s: str) -> str:
     s = re.sub(r'<script.*?</script>|<style.*?</style>', ' ', s, flags=re.S|re.I)
@@ -34,18 +40,15 @@ def parse_page(text: str):
     if not m:
         raise ValueError('Spieleinsatz not found')
     stake = parse_money(m.group(1))
-    m = re.search(r'Klasse\s*1\s+5\s*\+\s*2\s*EZ.*?\s([0-9.]+)\s+(?:[0-9.]+,[0-9]{2}\s*€|unbesetzt)', plain)
-    if not m:
-        # Fallback around the first class table row.
-        m = re.search(r'Klasse\s*1.*?\|?\s([0-9.]+)\s+(?:[0-9.]+,[0-9]{2}\s*€|unbesetzt)', plain)
-    if not m:
-        # explicit prose for zero case
-        if re.search(r'Gewinnklasse\s*1.*?(?:keinen Gewinn|unbesetzt)', plain, re.I):
-            winners = 0
-        else:
-            raise ValueError('class-1 winners not found')
-    else:
-        winners = int(m.group(1).replace('.', ''))
+
+    winners = {}
+    for cls in range(1, 13):
+        # The flattened table has: Klasse N ... <winner-count> <quote or unbesetzt>.
+        pat = rf'Klasse\s*{cls}\s+.*?\s([0-9.]+)\s+(?:[0-9.]+,[0-9]{{2}}\s*€|unbesetzt)'
+        m = re.search(pat, plain)
+        if not m:
+            raise ValueError(f'class-{cls} winners not found')
+        winners[cls] = int(m.group(1).replace('.', ''))
     return stake, winners
 
 
@@ -65,6 +68,7 @@ def load_draws():
 
 def features(main, euro):
     s = sorted(main)
+    e = sorted(euro)
     gaps = [b-a for a,b in zip(s,s[1:])]
     return {
         'main_le31': sum(x <= 31 for x in s),
@@ -75,8 +79,11 @@ def features(main, euro):
         'main_sum': sum(s),
         'span': s[-1] - s[0],
         'odd_count': sum(x % 2 for x in s),
-        'euro_low': sum(x <= 6 for x in euro),
-        'euro_contains7': int(7 in euro),
+        'high_count': sum(x >= 26 for x in s),
+        'euro_low': sum(x <= 6 for x in e),
+        'euro_contains7': int(7 in e),
+        'euro_sum': sum(e),
+        'euro_gap': e[1]-e[0],
     }
 
 
@@ -86,15 +93,11 @@ def fetch(url):
         return r.read().decode('utf-8', errors='replace')
 
 
-def rate_ratio(rows, key, predicate):
-    a = [r for r in rows if predicate(r[key])]
-    b = [r for r in rows if not predicate(r[key])]
-    def stat(g):
-        obs = sum(r['winners'] for r in g)
-        exp = sum(r['expected_uniform_winners'] for r in g)
-        ratio = obs/exp if exp else float('nan')
-        return len(g), obs, exp, ratio
-    return stat(a), stat(b)
+def class_probability(main_hits, euro_hits):
+    # One uniformly selected 5+2 line against one fixed winning 5+2 result.
+    main = math.comb(5, main_hits) * math.comb(45, 5-main_hits) / math.comb(50, 5)
+    euro = math.comb(2, euro_hits) * math.comb(10, 2-euro_hits) / math.comb(12, 2)
+    return main * euro
 
 
 def main():
@@ -109,8 +112,15 @@ def main():
         except Exception as e:
             print(f'HUMAN_FETCH_ERROR|date={d}|error={e}', file=sys.stderr)
             continue
-        r = {'date':d.isoformat(),'main':'-'.join(map(str,main_nums)),'euro':'-'.join(map(str,euro_nums)),
-             'stake':stake,'winners':winners,'expected_uniform_winners':(stake/TIP_PRICE)/ODDS}
+        tips = stake / TIP_PRICE
+        r = {
+            'date':d.isoformat(), 'main':'-'.join(map(str,main_nums)), 'euro':'-'.join(map(str,euro_nums)),
+            'stake':stake, 'estimated_tips':tips,
+        }
+        for cls,(mh,eh) in CLASS_HITS.items():
+            p = class_probability(mh,eh)
+            r[f'class{cls}_winners'] = winners[cls]
+            r[f'class{cls}_expected_uniform'] = tips * p
         r.update(features(main_nums,euro_nums))
         rows.append(r)
         if i % 50 == 0:
@@ -121,25 +131,11 @@ def main():
     with OUT.open('w',newline='',encoding='utf-8') as f:
         w=csv.DictWriter(f,fieldnames=fieldnames); w.writeheader(); w.writerows(rows)
 
-    total_obs=sum(r['winners'] for r in rows)
-    total_exp=sum(r['expected_uniform_winners'] for r in rows)
-    print(f'HUMAN_DATASET|rows={len(rows)}|observedJackpotWins={total_obs}|uniformExpected={total_exp:.3f}|overallRatio={total_obs/total_exp:.4f}')
-
-    checks = [
-        ('MAIN_LE31_GE4','main_le31',lambda x:x>=4),
-        ('CONTAINS_7','contains7',lambda x:x>=1),
-        ('ROUND_GE1','round_count',lambda x:x>=1),
-        ('CONSECUTIVE_GE1','consecutive_pairs',lambda x:x>=1),
-        ('SAME_LAST_DIGIT_PAIR','same_last_digit_pairs',lambda x:x>=1),
-        ('LOW_SUM_LE100','main_sum',lambda x:x<=100),
-        ('NARROW_SPAN_LE25','span',lambda x:x<=25),
-        ('EURO_LOW_BOTH','euro_low',lambda x:x>=2),
-        ('EURO_CONTAINS_7','euro_contains7',lambda x:x>=1),
-    ]
-    for name,key,pred in checks:
-        hi,lo=rate_ratio(rows,key,pred)
-        print('HUMAN_FEATURE|name=%s|groupN=%d|groupObs=%d|groupExp=%.3f|groupRatio=%.4f|otherN=%d|otherObs=%d|otherExp=%.3f|otherRatio=%.4f|ratioOfRatios=%.4f' %
-              (name,hi[0],hi[1],hi[2],hi[3],lo[0],lo[1],lo[2],lo[3],hi[3]/lo[3] if lo[3] else float('nan')))
+    print(f'HUMAN_DATASET_ALL_CLASSES|rows={len(rows)}')
+    for cls in range(1,13):
+        obs=sum(r[f'class{cls}_winners'] for r in rows)
+        exp=sum(r[f'class{cls}_expected_uniform'] for r in rows)
+        print(f'HUMAN_CLASS|class={cls}|observed={obs}|expectedUniform={exp:.3f}|ratio={obs/exp:.6f}')
 
 if __name__ == '__main__':
     main()
