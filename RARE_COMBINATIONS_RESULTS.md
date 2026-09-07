@@ -1,100 +1,134 @@
 # Historical rarity analysis
 
-Empirical results for the hypotheses in `RARE_COMBINATIONS.md`, calculated from `src/main/resources/eurojackpot_archiv.csv`.
+Empirical results for `RARE_COMBINATIONS.md`, calculated only from the committed local `src/main/resources/eurojackpot_archiv.csv`.
 
 ## Dataset
 
-- Draws: **434**
-- Period: **2012-03-23 through 2020-10-23**
-- Main numbers only: **5 of 50**
-- Transitions between consecutive draws: **433**
+- Draws: **987**
+- Period: **2012-03-23 through 2026-09-04**
+- Main pool: **5 of 50**
+- Consecutive transitions: **986**
+- Source used to refresh the committed file: **LOTTO Bayern EuroJackpot archive**
 
-Severity used by the test harness:
+Severity labels:
 
-- `< 0.5%` — VERY_RARE
-- `< 2%` — RARE
-- `< 5%` — UNCOMMON
-- `>= 5%` — COMMON
+```text
+< 0.5%  VERY_RARE
+< 2%    RARE
+< 5%    UNCOMMON
+>= 5%   COMMON
+```
 
-These labels describe observed frequency in this historical sample. They do not by themselves prove causality or non-randomness.
+These labels mean observed historical frequency only. They do not by themselves establish non-randomness or predictive power.
 
-## Strong candidates for filters
+## Strongest observed rarity candidates
 
-| Rule | Operational definition | Observed |
+| Rule | Definition | Observed |
 |---|---|---:|
-| R01 | >= 3 numbers repeated from previous draw | 1 / 433 = **0.231%** |
-| R01 | >= 4 numbers repeated from previous draw | 0 / 433 = **0%** |
-| R02 | >= 4 numbers from union of previous 2 draws | 1 / 432 = **0.231%** |
-| R02 | all 5 numbers from union of previous 2 draws | 0 / 432 = **0%** |
-| R06 | >= 2 numbers appearing in 3 consecutive draws | 0 / 432 = **0%** |
-| R07 | sorted L1 distance <= 5 from previous draw | 0 / 433 = **0%** |
-| R07 | sorted L1 distance <= 10 | 2 / 433 = **0.462%** |
-| R08 | >= 4 identical positional shifts | 1 / 433 = **0.231%** |
-| R08 | 5 identical positional shifts | 0 / 433 = **0%** |
-| R09 | gap-vector L1 distance <= 5 | 1 / 433 = **0.231%** |
-| R10 | exact arithmetic progression | 0 / 434 = **0%** |
-| R10 | near progression, gap range <= 2 | 0 / 434 = **0%** |
-| R11 | total number span <= 10 | 1 / 434 = **0.230%** |
-| R12 | run of >= 4 consecutive numbers | 1 / 434 = **0.230%** |
-| R13 | high sum >= 175 repeated in consecutive draws | 1 / 433 = **0.231%** |
-| R14 | narrow span <= 20 repeated | 2 / 433 = **0.462%** |
-| R17 | mirror L1 distance <= 5 | 0 / 433 = **0%** |
-| R17 | mirror L1 distance <= 10 | 2 / 433 = **0.462%** |
-| R20 | exact full structural state repeated | 0 / 433 = **0%** |
+| R01 | >=4 main numbers repeated from previous draw | 0 / 986 = **0.000%** |
+| R01/R04 | >=3 main numbers repeated from previous draw | 4 / 986 = **0.406%** |
+| R02 | >=4 main numbers from union of previous two draws | 3 / 985 = **0.305%** |
+| R02 | all five from union of previous two draws | 0 / 985 = **0.000%** |
+| R06 | >=2 numbers appear in three consecutive draws | 0 / 985 = **0.000%** |
+| R07 | sorted L1 distance <=5 | 0 / 986 = **0.000%** |
+| R08 | >=4 equal positional shifts | 2 / 986 = **0.203%** |
+| R08 | all five positional shifts equal | 0 / 986 = **0.000%** |
+| R09 | gap-vector L1 distance <=3 | 2 / 986 = **0.203%** |
+| R09 | gap-vector L1 distance <=5 | 3 / 986 = **0.304%** |
+| R10 | exact arithmetic progression | 0 / 987 = **0.000%** |
+| R10 | near progression, gap range <=2 | 4 / 987 = **0.405%** |
+| R12 | run of >=4 consecutive numbers | 1 / 987 = **0.101%** |
+| R13/R32 | HIGH sum >=175 -> HIGH sum >=175 | 3 / 986 = **0.304%** |
+| R17 | mirror L1 distance <=5 | 2 / 986 = **0.203%** |
+| R20 | exact full structural state repeated | 1 / 986 = **0.101%** |
+| R24 | all five numbers in one decade | 0 / 987 = **0.000%** |
+| R30 | exact five-number main combination repeated | 0 / 987 = **0.000%** |
+| R32 | (HIGH sum + wide span) repeated consecutively | 0 / 986 = **0.000%** |
 
-## Rare / uncommon but not hard-reject candidates
+## Rare / soft-penalty candidates
 
-| Rule | Operational definition | Observed |
+| Rule | Definition | Observed |
 |---|---|---:|
-| R05 | same number appears in 4 consecutive draws | 4 / 431 = **0.928%** |
-| R12 | run of >= 3 consecutive numbers | 10 / 434 = **2.304%** |
-| R13 | low sum <= 80 repeated | 3 / 433 = **0.693%** |
-| R14 | wide span >= 45 repeated | 6 / 433 = **1.386%** |
-| R16 | exact decade distribution repeated | 5 / 433 = **1.155%** |
-| R19 | pair completes an equal-pause pattern | 12 / 433 = **2.771%** |
+| R05 | a number appears in four consecutive draws | 5 / 984 = **0.508%** |
+| R07 | sorted L1 distance <=10 | 7 / 986 = **0.710%** |
+| R11 | total span <=10 | 5 / 987 = **0.507%** |
+| R13/R32 | LOW sum <=80 -> LOW sum <=80 | 8 / 986 = **0.811%** |
+| R14/R32 | NARROW span <=20 -> NARROW | 5 / 986 = **0.507%** |
+| R14 | WIDE span >=45 -> WIDE | 14 / 986 = **1.420%** |
+| R16/R25 | exact decade distribution repeated | 15 / 986 = **1.521%** |
+| R17 | mirror L1 distance <=10 | 7 / 986 = **0.710%** |
+| R24 | >=4 numbers in one decade | 15 / 987 = **1.520%** |
+| R28 | all five numbers in same modulo-3 class | 8 / 987 = **0.811%** |
 
-## Hypotheses that are too common under the tested definition
+## Uncommon but weak rules
 
-| Rule | Operational definition | Observed |
+| Rule | Definition | Observed |
 |---|---|---:|
-| R01/R03 | pair / >=2 numbers repeated from previous draw | 35 / 433 = **8.083%** |
-| R03 | a pair repeated within previous 5 draws | 142 / 429 = **33.100%** |
-| R04 | a triple found somewhere in previous 13 draws | 25 / 421 = **5.938%** |
-| R05 | any number appears in 3 consecutive draws | 21 / 432 = **4.861%** |
-| R11 | 3 numbers inside width <= 4 | 58 / 434 = **13.364%** |
-| R13 | isolated low sum <= 80 | 34 / 434 = **7.834%** |
-| R13 | isolated high sum >= 175 | 27 / 434 = **6.221%** |
-| R14 | isolated narrow span <= 20 | 26 / 434 = **5.991%** |
-| R14 | isolated wide span >= 45 | 41 / 434 = **9.447%** |
-| R15 | isolated extreme parity (0/1/4/5 odd) | 162 / 434 = **37.327%** |
-| R15 | same extreme odd count repeated | 26 / 433 = **6.005%** |
-| R18 | number completes equal-pause pattern | 90 / 433 = **20.785%** |
-| R20 | same coarse sum+span state repeated | 247 / 433 = **57.044%** |
+| R11 | four numbers inside width <=8 | 42 / 987 = **4.255%** |
+| R12/R26 | consecutive run >=3 | 21 / 987 = **2.128%** |
+| R19 | pair completes equal-pause pattern | 34 / 986 = **3.448%** |
+| R25 | exact positional parity signature repeated | 32 / 986 = **3.245%** |
+| R26 | at least two consecutive adjacencies | 43 / 987 = **4.357%** |
+| R27 | >=3 main numbers share the same last digit | 49 / 987 = **4.965%** |
+| R29 | maximum adjacent gap >=30 | 40 / 987 = **4.053%** |
+| R31 | both Euro numbers repeated immediately | 20 / 986 = **2.028%** |
 
-## Conditional checks
+## Rules that are too common for rejection
 
-The first conditional definitions tested here did **not** produce rare events:
+| Rule | Definition | Observed |
+|---|---|---:|
+| R01/R03 | >=2 main numbers repeated from previous draw | 78 / 986 = **7.911%** |
+| R03 | pair seen anywhere in previous five draws | 315 / 982 = **32.077%** |
+| R04 | triple seen anywhere in previous 13 draws | 57 / 974 = **5.852%** |
+| R05 | any number appears in three consecutive draws | 47 / 985 = **4.772%** |
+| R11 | three numbers inside width <=4 | 116 / 987 = **11.753%** |
+| R13 | isolated LOW sum <=80 | 72 / 987 = **7.295%** |
+| R13 | isolated HIGH sum >=175 | 60 / 987 = **6.079%** |
+| R14 | isolated NARROW span <=20 | 72 / 987 = **7.295%** |
+| R14 | isolated WIDE span >=45 | 101 / 987 = **10.233%** |
+| R15 | isolated extreme odd/even count | 381 / 987 = **38.602%** |
+| R18 | single number completes equal-pause pattern | 224 / 986 = **22.718%** |
+| R20 | same coarse sum+span state repeated | 543 / 986 = **55.071%** |
+| R23 | all five main numbers in same 1..25 / 26..50 half | 52 / 987 = **5.268%** |
+| R23 | >=4 main numbers in same half | 358 / 987 = **36.272%** |
+| R28 | >=4 numbers in one modulo-3 class | 112 / 987 = **11.348%** |
+| R29 | maximum adjacent gap >=25 | 121 / 987 = **12.259%** |
+| R31 | at least one Euro number repeated immediately | 355 / 986 = **36.004%** |
 
-- `P(overlap >= 2 | previous sum <= 80)` = 2 / 34 = **5.882%**
-- `P(narrow span <= 20 | previous narrow span <= 20)` = 2 / 26 = **7.692%**
-- `P(>=4 odd | previous >=4 odd)` = 19 / 85 = **22.353%**
+## Why LOW->LOW and HIGH->HIGH matter
 
-This does not invalidate conditional modelling; it means these three specific conditions are not useful rarity filters at the current thresholds.
+An isolated extreme state and a repeated transition answer different questions. LOW sums occur in **7.295%** of draws, but LOW→LOW occurs in only **0.811%** of transitions. HIGH sums occur in **6.079%** of draws, while HIGH→HIGH occurs in **0.304%** of transitions.
 
-## Interpretation
+This does not prove dependence between draws. It does show that candidate evaluation should preserve transition features instead of discarding temporal context. The correct follow-up is to compare these transition frequencies with an exact or simulated independent-draw baseline.
 
-The most promising family is **transition geometry**, not isolated draw shape. Very small sorted-vector distance, repeated gap shape, near-constant positional shift, very high overlap with the immediately preceding draws, and repeated extreme states are all historically scarce in this sample.
+The compound rule `(HIGH sum + wide span) -> (HIGH sum + wide span)` occurred **0 / 986** times. This is interesting as a rarity rule but especially vulnerable to post-hoc threshold selection, so it should be validated on an unseen time window before becoming a hard rejection.
 
-Several intuitive rules are much weaker than expected. A repeated pair in the immediately previous draw occurs about 8% of the time, a single number lasting three draws occurs about 4.9%, and periodicity of a single number is common under the simple equal-pause definition. These should not be hard rejects.
+## Conditional checks that did not become rare
 
-The next useful step is to compare each rule with a large 5-of-50 Monte Carlo baseline and calculate confidence intervals / expected frequencies. That distinguishes "rare because combinatorics makes it rare" from "rarer in the observed EuroJackpot history than a uniform draw model would predict".
+- `P(overlap >=2 | previous sum <=80)` = **6 / 72 = 8.333%**
+- `P(NARROW | previous NARROW)` = **5 / 72 = 6.944%** when expressed conditionally rather than over all transitions
+- `P(>=4 odd | previous >=4 odd)` = **43 / 203 = 21.182%**
+
+This distinction is important: `NARROW -> NARROW` is only 5/986 of all transitions, but conditional on already being in NARROW state it is 5/72. Both numbers are valid; they answer different questions.
+
+## New ideas collected from public statistics practice
+
+EuroJackpot statistics sites commonly analyze pairs/triples, even/odd balance, sums, tens groups, consecutive numbers and Euro numbers. Those families are covered by R03/R04, R15, R13/R32, R16/R24/R25, R12/R26 and R31.
+
+Additional experiments retained for future work are robust inter-arrival-gap statistics (CV, MAD, IQR), sum-bucket transition matrices, high/low transition matrices, nearest-historical-draw distance and comparison with exact/random baselines.
 
 ## Reproduction
 
-Run:
+Normal tests require no network access:
 
 ```bash
-./mvnw -Dtest=RareCombinationHypothesesTest test
+./mvnw test
 ```
 
-The test prints machine-readable `REPORT|...` rows for all hypotheses.
+To refresh the committed archive separately:
+
+```bash
+python3 scripts/update_eurojackpot_archive.py
+```
+
+After refreshing, commit the CSV and run the tests again. This keeps data acquisition separate from statistical verification and makes every test run reproducible.
