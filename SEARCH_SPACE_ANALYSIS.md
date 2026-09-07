@@ -64,9 +64,64 @@ Per-rule hits on actual next draws:
 
 This is the critical trade-off: the current hard set shrinks today's main-number space by **2.56%**, but historically it would also have discarded **1.93% of the actual observed next draws**. Therefore the full VERY_RARE set should not automatically be treated as a single unconditional hard reject layer. A more defensible next step is to rank rules by search-space reduction versus historical false-rejection rate and use some as penalties rather than hard filters.
 
+## Broad rules with at least about 90% historical keep rate
+
+A second optimization target is more practical than looking only for `<0.5%` historical events: maximize search-space reduction while keeping at least about 90% of historical winners.
+
+Exact enumeration over all `2,118,760` main-number combinations and direct evaluation against all 987 historical draws gives:
+
+| Rule | Search space rejected | Historical winners kept |
+|---|---:|---:|
+| sum >=175 | **6.582010%** | **93.920973%** |
+| sum <=80 | **6.582010%** | **92.705167%** |
+| span <=20 | **7.591893%** | **92.705167%** |
+| all 5 in one half (1-25 or 26-50) | **5.015198%** | **94.731510%** |
+| maximum adjacent gap >=30 | **3.841681%** | **95.947315%** |
+| consecutive run >=3 | **2.346939%** | **97.872340%** |
+| same-half OR run>=3 | **6.904227%** | **92.806484%** |
+| HIGH sum OR same-half | **9.469076%** | **90.780142%** |
+| narrow span OR max gap>=30 | **11.433574%** | **88.652482%** |
+
+The strongest currently verified combination that still clears the 90% historical keep-rate target is `HIGH sum >=175 OR all five numbers in one half`. It removes **200,627 combinations (9.469076%)** while retaining **896 of 987 historical draws (90.780142%)**. The `narrow OR max-gap` combination removes more, **11.433574%**, but falls below the 90% target and therefore should not be treated as a qualifying hard filter.
+
+These figures are descriptive backtests on the same historical sample used to define the thresholds. They are useful for search-space engineering, but thresholds should still be checked on a time-split/out-of-sample period before being treated as predictive.
+
+## Positional historical-range rule
+
+For every historical winning combination, sort the five main numbers ascending and look at the minimum and maximum ever observed at each position. On the 987-draw archive the ranges are:
+
+| Sorted position | Historical range |
+|---|---:|
+| 1st / smallest | **1-38** |
+| 2nd | **2-42** |
+| 3rd | **4-46** |
+| 4th | **9-49** |
+| 5th / largest | **13-50** |
+
+The implemented rule rejects a candidate only when **at least two sorted positions are outside their respective historical ranges**.
+
+Exact enumeration of all `C(50,5)` candidates gives:
+
+| Positions outside historical range | Combinations | Share |
+|---:|---:|---:|
+| 0 | 2,107,581 | 99.472380% |
+| 1 | 9,641 | 0.455030% |
+| 2 | 1,412 | 0.066643% |
+| 3 | 126 | 0.005947% |
+| 4 | 0 | 0.000000% |
+| 5 | 0 | 0.000000% |
+
+Therefore the `>=2 positions outside range` rule rejects exactly **1,538 combinations = 0.072590%** and leaves **2,117,222 = 99.927410%** of the main-number search space.
+
+A rolling historical backtest was also run without future leakage: after an initial 50 draws, each next draw was tested against positional ranges learned only from earlier draws. Of **937** checked next draws, only **1** would have been rejected. The rolling keep rate is therefore **99.893276%**. Another 12 draws had exactly one position outside the then-known ranges and were correctly retained by the `>=2` threshold.
+
+This rule is exceptionally conservative: its historical false-rejection rate is very low, but its search-space reduction is also very small. It is better suited as a safe auxiliary hard rule than as a major source of search-space reduction.
+
+Implementation: `PositionalRangeRule` derives the five ranges and counts out-of-range positions; `PositionalRangeRuleTest` performs the exact 2.1M-combination enumeration and the rolling time-ordered backtest. `BroadRuleSearchSpaceTest` measures the 90%-keep-rate candidates above.
+
 ## Reproduction
 
-The exact current-state enumeration and historical actual-next backtest run as part of the normal local test suite:
+The exact current-state enumeration, broad-rule enumeration, positional-range analysis and historical backtests run as part of the normal local test suite:
 
 ```bash
 ./mvnw test
