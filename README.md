@@ -1,5 +1,27 @@
 # generator
 
+## EuroJackpot research documentation
+
+The current research state is intentionally documented in the repository so that conclusions, negative results, calibration choices, and methodological caveats do not depend on chat history.
+
+Start with **`RESEARCH_CONTEXT.md`**. It contains the persistent research summary, the distinction between draw-rarity and human-choice objectives, current best results, known implementation issues, and the recommended next steps.
+
+Detailed reports:
+
+- `RARE_COMBINATIONS.md` — definitions of rarity rules R01-R32.
+- `RARE_COMBINATIONS_RESULTS.md` — measured historical frequencies.
+- `SEARCH_SPACE_ANALYSIS.md` — exact candidate-space reduction and historical backtests.
+- `POSITIONAL_COVERAGE_SWEEP.md` — positional percentile/range sweep and keep-rate operating points.
+- `ADVANCED_RARITY_IDEAS.md` — fixed 70/30 evaluation of additional structural and transition ideas.
+- `ADAPTIVE_THRESHOLDS.md` — recalculation of thresholds after every completed draw.
+- `SCIENTIFIC_AUDIT.md` — Fourier/spectral analysis, Monte Carlo replication, autocorrelation, and exact theoretical baselines.
+- `HUMAN_CHOICE_AUDIT.md` — all-12-class player-choice model and test of the anti-human-draw hypothesis.
+- `DEPENDENCIES.md` — Java/Spring/dependency modernization.
+
+The committed archive is `src/main/resources/eurojackpot_archiv.csv`. Data acquisition is kept separate from ordinary tests; normal rarity tests use local committed resources.
+
+## Original project notes
+
 category C0(третье число, в середине) встречается в 62%\
 если category C0=1, то в первом и в втором столбце стоят позитивные индексы, например:
 2, 1, 1, 0, 0 или 3, 1, 1, 0, -1
