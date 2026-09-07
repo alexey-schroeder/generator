@@ -1,0 +1,23 @@
+name: Human choice audit
+
+on:
+  push:
+    branches: [ rarity-rules-refresh ]
+    paths:
+      - 'scripts/fetch_human_choice_dataset.py'
+      - '.github/workflows/human-choice-audit.yml'
+      - 'src/main/resources/eurojackpot_archiv.csv'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Fetch draw stakes and jackpot winners
+        run: python3 scripts/fetch_human_choice_dataset.py
+      - name: Upload dataset
+        uses: actions/upload-artifact@v4
+        with:
+          name: eurojackpot-human-choice
+          path: target/eurojackpot_human_choice.csv
