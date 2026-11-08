@@ -3,7 +3,7 @@ name: Rarity hypotheses
 on:
   push:
     branches:
-      - rarity-rules-refresh
+      - master
   pull_request:
   workflow_dispatch:
 

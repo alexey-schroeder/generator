@@ -2,7 +2,7 @@ name: Human choice audit
 
 on:
   push:
-    branches: [ rarity-rules-refresh ]
+    branches: [ master ]
     paths:
       - 'scripts/fetch_human_choice_dataset.py'
       - 'scripts/human_choice_full_audit.py'
